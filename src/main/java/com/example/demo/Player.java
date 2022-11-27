@@ -108,26 +108,7 @@ public class Player {
       if (this.getPoints() <= 30){
         this.setPoints(this.getPoints()+15);
       }
-
-
-
-/*
-    if(this.gamesStorage.get(currentGame) == 3) {
-      this.setSets(this.getSets() + 1);
-      this.gamesStorage.add(0);
-      playerGettingScoredAgainst.gamesStorage.add(0);
-      playerGettingScoredAgainst.gamesStorage.set(currentGame,
-          playerGettingScoredAgainst.gamesStorage.get(playerGettingScoredAgainst.currentGame));
-      playerGettingScoredAgainst.currentGame += 1;
-      this.currentGame += 1;
-    }
-
- */
-
-
-    //  checkIfSetIsWon();
   }
-
 
 
   public void checkIfSetIsWon() {
@@ -140,27 +121,10 @@ public class Player {
     this.playerOneWon = true;
   }
 
-  public void checkIfWon(Player playerOne){
-    if (playerOne.getSets() == 2){
-      var p = new Paragraph("Player won");
-    }
+  public String getScoreOfPlayer(Player player) {
+    return  player.getName() + " " + player.getSets() + " " +
+        player.gamesStorage + " " +
+        player.getPoints() +
+        player.printADOrNot;
   }
-/*
-  public void checkIfEnoughPointsForGame(Player player) {
-
-    if (this.getPoints() > 40 && this.getPoints() >= player.getPoints() + 20) {
-      this.setPoints(0);
-      player.setPoints(0);
-      this.setSets(getSets() + 1);
-    }
-  }
-
-  public String winningPlayer(Player playerOne, Player playerTwo) {
-    if (playerOne.getSets() > playerTwo.getSets()) {
-      return playerOne.getName();
-    } else {
-      return playerTwo.getName();
-    }
-  }
-   */
 }
