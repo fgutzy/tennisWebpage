@@ -1,38 +1,28 @@
 package com.example.demo;
 
-import static javax.swing.JOptionPane.showInputDialog;
-import static javax.swing.JOptionPane.showMessageDialog;
-
-
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.textfield.IntegerField;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.lumo.LumoUtility;
-import javax.validation.constraints.NotNull;
 
 @Route("")
 public class Game extends VerticalLayout {
 
-  int firstClickOnStartOrEndButton = 1;
-  int totalSetsNeededToWin;
+  boolean firstClickOnStartOrEndButton = true;
   boolean gameWon = false;
 
   public Game() {
 
-    Label scoreOfPlayerOne = new Label();
-    Label scoreOfPlayerTwo = new Label();
+    //create all needed Fields and Buttons
+    Label scoreLabelPlayerOne = new Label();
+    Label scoreLabelPlayerTwo = new Label();
 
     var playerOneNameField = new TextField("Enter name of Player one");
     var playerTwoNameField = new TextField("Enter name of Player two");
@@ -40,6 +30,7 @@ public class Game extends VerticalLayout {
     playerOneNameField.setHelperText("Max 16 letters");
     playerTwoNameField.setMaxLength(16);
     playerTwoNameField.setHelperText("Max 16 letters");
+
     var startOrEndButton = new Button("Start Game"); // initialize button as Start
     startOrEndButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
 
@@ -50,7 +41,6 @@ public class Game extends VerticalLayout {
     Player playerOne = new Player("");
     Player playerTwo = new Player("");
 
-
     IntegerField integerField = new IntegerField();
     integerField.setLabel("Sets needed to win");
     integerField.setHelperText("Can be changed in-game");
@@ -60,64 +50,52 @@ public class Game extends VerticalLayout {
     integerField.setValue(2);
     integerField.setHasControls(true);
 
-
-    var playerAndSetInputFields = new HorizontalLayout(playerOneNameField, playerTwoNameField, integerField);
+    // put fields and buttons in a variable
+    var playerAndSetInputFields =
+        new HorizontalLayout(playerOneNameField, playerTwoNameField, integerField);
     var alignedStartButton = new HorizontalLayout(startOrEndButton); //button in new line
 
+    //allign items accordingly
     playerAndSetInputFields.setDefaultVerticalComponentAlignment(Alignment.AUTO);
     alignedStartButton.setVerticalComponentAlignment(Alignment.CENTER);
 
 
+    //startOrEndButton is clicked
     startOrEndButton.addClickListener(e -> {
 
+      //set Player names with input from textfields
       playerOne.setName(playerOneNameField.getValue());
       playerTwo.setName(playerTwoNameField.getValue());
 
-      if (playerOne.getName().length() != playerTwo.getName().length()){
-        String toChange;
-        if (playerOne.getName().length() < playerTwo.getName().length()){
-          toChange = playerOne.getName();
-        } else toChange = playerTwo.getName();
+      //method for filling up length differences in names to be more esthetic
 
-        int lengthDifference = Math.abs(playerOne.getName().length()-playerTwo.getName().length())*2-2;
-        for (int i = 0; i < lengthDifference; i++){
-          toChange += "\u00a0";
-        }
+      bringNamesToSameLength(playerOne, playerTwo);
 
-        if (playerOne.getName().length() < playerTwo.getName().length()){
-          playerOne.setName(toChange);
-        } else playerTwo.setName(toChange);
-      }
+      //after game is started change the buttons text, colour and display the score (0,0),
+      // and create buttons with name of players
+      if (firstClickOnStartOrEndButton) {
 
-
-      playerOneNameField.setEnabled(false);
-      playerTwoNameField.setEnabled(false);
-
-      if (firstClickOnStartOrEndButton == 1) {
         startOrEndButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         startOrEndButton.setText("End Game");
 
-        scoreOfPlayerOne.setText(displayScoreOfPlayerOne(playerOne));
-        scoreOfPlayerTwo.setText(displayScoreOfPlayerTwo(playerTwo));
-        var displayScore = new VerticalLayout(scoreOfPlayerOne, scoreOfPlayerTwo);
-        displayScore.setAlignItems(Alignment.CENTER);
-        add(displayScore);
+        getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
 
-        // by creating buttons on top they can be accessed for the eventListener of playerButton as well
+        var displayScore = new VerticalLayout(scoreLabelPlayerOne, scoreLabelPlayerTwo);
+        var playOngoing = new HorizontalLayout(playerOneButton, playerTwoButton);
+        displayScore.setAlignItems(Alignment.CENTER);
+        add(displayScore, playOngoing);
+
         playerOneButton.setText(playerOneNameField.getValue());
         playerTwoButton.setText(playerTwoNameField.getValue());
 
-        var playOngoing = new HorizontalLayout(playerOneButton, playerTwoButton);
-        add(playOngoing);
+        firstClickOnStartOrEndButton = false;
 
-        firstClickOnStartOrEndButton++;
-
-      } else {
+      } else { //if startOrEndButton is clicked after game was started change show pop up to make sure user wants to end
 
         Dialog dialog = new Dialog();
         dialog.setHeaderTitle("End Game?");
 
-        Button endGameButton = new Button("Yes, End Game", g->  UI.getCurrent().getPage().reload());
+        Button endGameButton = new Button("Yes, End Game", g -> UI.getCurrent().getPage().reload());
         Button cancelButton = new Button("Cancel", i -> dialog.close());
         dialog.getFooter().add(cancelButton);
         dialog.getFooter().add(endGameButton);
@@ -125,54 +103,108 @@ public class Game extends VerticalLayout {
 
         add(dialog);
       }
+
+      //deactivate buttons for name input after game is started
+      setPlayerFieldsFalse(playerOneNameField, playerTwoNameField);
     });
 
+    //when cutton of player is pressed, call scorePoint method and set score for both players
     playerOneButton.addClickListener(o -> {
       playerOne.scoredPointAgainst(playerTwo);
-      scoreOfPlayerOne.setText(displayScoreOfPlayerOne(playerOne));
-      scoreOfPlayerTwo.setText(displayScoreOfPlayerTwo(playerTwo));
-      if (playerOne.getSets() == integerField.getValue()){
+
+      if (playerOne.getSets() == integerField.getValue()) { //check if enough sets to win the game
+
         gameWon = true;
-        playerOne.gamesStorage.remove(playerOne.gamesStorage.size()-1);
-        playerTwo.gamesStorage.remove(playerTwo.gamesStorage.size()-1);
-        scoreOfPlayerOne.setText(displayScoreOfPlayerOne(playerOne));
-        scoreOfPlayerTwo.setText(displayScoreOfPlayerTwo(playerTwo));
+
+        //remove last object (bc 0 was added after game was over)
+        removeLastGame(playerOne, playerTwo);
+
         var playerWonMessage = new Paragraph(playerOne.getName() + " has won");
         add(playerWonMessage);
-        playerOneButton.setEnabled(false);
-        playerTwoButton.setEnabled(false);
+
+        //buttons cant be pressed after game is over
+        setPlayerButtonsFalse(playerOneButton, playerTwoButton);
+
+        //startOrEndButton can create new game
         startOrEndButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_CONTRAST);
         startOrEndButton.setText("Start New Game");
       }
+
+      //set score for players after check if game wis won
+      getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
 
     });
 
     playerTwoButton.addClickListener(o -> {
       playerTwo.scoredPointAgainst(playerOne);
-      scoreOfPlayerOne.setText(displayScoreOfPlayerOne(playerOne));
-      scoreOfPlayerTwo.setText(displayScoreOfPlayerTwo(playerTwo));
 
+      if (playerTwo.getSets() == integerField.getValue()) { //check if enough sets to win the game
+
+        gameWon = true;
+
+        //remove last object (bc 0 was added after game was over)
+        removeLastGame(playerOne, playerTwo);
+
+        //buttons cant be pressed after game is over
+        setPlayerButtonsFalse(playerOneButton, playerTwoButton);
+
+        //create Message that Player won
+        var playerWonMessage = new Paragraph(playerTwo.getName() + " has won");
+        add(playerWonMessage);
+
+        //startOrEndButton can create new game
+        startOrEndButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_CONTRAST);
+        startOrEndButton.setText("Start New Game");
+      }
+
+      //set score for players after check if game is won
+      getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
     });
 
     add(playerAndSetInputFields, alignedStartButton);
     setAlignItems(Alignment.CENTER);
   }
 
+  private static void bringNamesToSameLength(Player playerOne, Player playerTwo){
+    StringBuilder toChange;
 
-  private String displayScoreOfPlayerOne(Player playerOne) {
-    return  playerOne.getName() + " " + playerOne.getSets() + " " +
-        playerOne.gamesStorage + " " +
-        playerOne.getPoints() +
-        playerOne.printADOrNot;
+    if (playerOne.getName().length() != playerTwo.getName().length()) {
 
+      int lengthDifference =
+          Math.abs(playerOne.getName().length() - playerTwo.getName().length()) * 2 - 2;
+
+      if (playerOne.getName().length() < playerTwo.getName().length()) {
+        toChange = new StringBuilder(playerOne.getName());
+        playerOne.setName(toChange.append("\u00a0".repeat(Math.max(0, lengthDifference))).toString());
+      } else {
+        toChange = new StringBuilder(playerTwo.getName());
+        playerTwo.setName(toChange.append("\u00a0".repeat(Math.max(0, lengthDifference))).toString());
+      }
+    }
   }
 
-  private String displayScoreOfPlayerTwo(Player playerTwo) {
-    return playerTwo.getName() + " " + playerTwo.getSets() + " " +
-        playerTwo.gamesStorage + " " +
-        playerTwo.getPoints() +
-        playerTwo.printADOrNot;
+
+  private static void setPlayerButtonsFalse(Button playerOneButton, Button playerTwoButton) {
+    playerOneButton.setEnabled(false);
+    playerTwoButton.setEnabled(false);
   }
+
+  private static void setPlayerFieldsFalse(TextField playerOneField, TextField playerTwoField) {
+    playerOneField.setEnabled(false);
+    playerTwoField.setEnabled(false);
+  }
+
+  private static void getScore(Label lableOfPlayerOne, Player playerOne, Label labelOfPlayerTwo,
+                               Player playerTwo) {
+    lableOfPlayerOne.setText(playerOne.getScoreOfPlayer(playerOne));
+    labelOfPlayerTwo.setText(playerTwo.getScoreOfPlayer(playerTwo));
+  }
+
+  private static void removeLastGame(Player playerOne, Player playerTwo){
+    playerOne.gamesStorage.remove(playerOne.gamesStorage.size() - 1);
+    playerTwo.gamesStorage.remove(playerTwo.gamesStorage.size() - 1);
+  }
+
 }
 
 
