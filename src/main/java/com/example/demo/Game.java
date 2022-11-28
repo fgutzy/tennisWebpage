@@ -217,8 +217,8 @@ public class Game extends VerticalLayout {
 
   private static void getScore(Label lableOfPlayerOne, Player playerOne, Label labelOfPlayerTwo,
                                Player playerTwo) {
-    lableOfPlayerOne.setText(playerOne.getScoreOfPlayer(playerOne));
-    labelOfPlayerTwo.setText(playerTwo.getScoreOfPlayer(playerTwo));
+    lableOfPlayerOne.setText(playerOne.getScoreOfPlayer());
+    labelOfPlayerTwo.setText(playerTwo.getScoreOfPlayer());
   }
 
   private static void removeLastGame(Player playerOne, Player playerTwo){

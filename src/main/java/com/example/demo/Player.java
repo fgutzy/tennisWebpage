@@ -189,10 +189,10 @@ public class Player {
   }
 
 
-  public String getScoreOfPlayer(Player player) {
-    return player.getName() + " " + player.getSets() + " " +
-        player.gamesStorage + " " +
-        player.getPoints() +
-        player.printADOrNot;
+  public String getScoreOfPlayer() {
+    return this.getName() + " " + this.getSets() + " " +
+        this.gamesStorage + " " +
+        this.getPoints() +
+        this.printADOrNot;
   }
 }
