@@ -20,6 +20,9 @@ public class Game extends VerticalLayout {
 
   public Game() {
 
+    //create Message but dont initialize (will be done in the method that checks if tiebreak is happening)
+    var tiebreakMessage = new Paragraph("");
+
     //create all needed Fields and Buttons
     Label scoreLabelPlayerOne = new Label();
     Label scoreLabelPlayerTwo = new Label();
@@ -68,7 +71,6 @@ public class Game extends VerticalLayout {
       playerTwo.setName(playerTwoNameField.getValue());
 
       //method for filling up length differences in names to be more esthetic
-
       bringNamesToSameLength(playerOne, playerTwo);
 
       //after game is started change the buttons text, colour and display the score (0,0),
@@ -83,10 +85,15 @@ public class Game extends VerticalLayout {
         var displayScore = new VerticalLayout(scoreLabelPlayerOne, scoreLabelPlayerTwo);
         var playOngoing = new HorizontalLayout(playerOneButton, playerTwoButton);
         displayScore.setAlignItems(Alignment.CENTER);
-        add(displayScore, playOngoing);
+        add(displayScore ,playOngoing, tiebreakMessage);
 
         playerOneButton.setText(playerOneNameField.getValue());
         playerTwoButton.setText(playerTwoNameField.getValue());
+
+        //initialize gamesStorage with 0 for both players
+        playerOne.gamesStorage.add(0);
+        playerTwo.gamesStorage.add(0);
+
 
         firstClickOnStartOrEndButton = false;
 
@@ -111,6 +118,8 @@ public class Game extends VerticalLayout {
     //when cutton of player is pressed, call scorePoint method and set score for both players
     playerOneButton.addClickListener(o -> {
       playerOne.scoredPointAgainst(playerTwo);
+
+      checkForTiebreak(playerOne, tiebreakMessage);
 
       if (playerOne.getSets() == integerField.getValue()) { //check if enough sets to win the game
 
@@ -138,6 +147,8 @@ public class Game extends VerticalLayout {
     playerTwoButton.addClickListener(o -> {
       playerTwo.scoredPointAgainst(playerOne);
 
+      checkForTiebreak(playerTwo, tiebreakMessage);
+
       if (playerTwo.getSets() == integerField.getValue()) { //check if enough sets to win the game
 
         gameWon = true;
@@ -164,6 +175,16 @@ public class Game extends VerticalLayout {
     add(playerAndSetInputFields, alignedStartButton);
     setAlignItems(Alignment.CENTER);
   }
+
+
+  private static void checkForTiebreak(Player player, Paragraph paragraph){
+    if (player.tiebreak){
+      paragraph.setText("Tiebreak!");
+    }else {
+      paragraph.setText("");
+    }
+  }
+
 
   private static void bringNamesToSameLength(Player playerOne, Player playerTwo){
     StringBuilder toChange;

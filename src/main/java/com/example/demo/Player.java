@@ -1,11 +1,6 @@
 package com.example.demo;
 
-import com.sun.jna.platform.mac.CoreFoundation;
-import com.vaadin.flow.component.html.Paragraph;
 import java.util.ArrayList;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
 
 public class Player {
@@ -17,21 +12,20 @@ public class Player {
   int points = 0;
   boolean hasAdvantage;
   int currentGame = 0;
-  int currentServer;
-  boolean playerOneWon = false;
+  boolean tiebreak = false;
 
   String printADOrNot = "";
+
 
   public Player(String name) {
     this.name = name;
   }
 
-
   public String getName() {
     return name;
   }
 
-  public void setName(String name){
+  public void setName(String name) {
     this.name = name;
   }
 
@@ -57,72 +51,146 @@ public class Player {
 
   public void scoredPointAgainst(Player playerGettingScoredAgainst) {
 
-    setTrue();
+    //if player scored while having an Advantage
+    if (this.hasAdvantage) {
 
-    if (this.hasAdvantage){
-      this.setPoints(0);
-      playerGettingScoredAgainst.setPoints(0);
-      //initialize gamesStorage with 0 for both players
-      if (this.gamesStorage.isEmpty()) {
-        this.gamesStorage.add(0);
-        playerGettingScoredAgainst.gamesStorage.add(0);
-      }
+      //after scoring during Advantage Points are set to zero
+      setPointsOfBothPlayersZero(this, playerGettingScoredAgainst);
+
+      //after game was won, add 1 game to his current gamescore
       this.gamesStorage.set(currentGame, this.gamesStorage.get(this.currentGame) + 1);
-      if (this.gamesStorage.get(currentGame) == 3) {
-        this.setSets(this.getSets() + 1);
 
-        this.gamesStorage.add(0);
-        playerGettingScoredAgainst.gamesStorage.add(0);
-        playerGettingScoredAgainst.gamesStorage.set(currentGame,
-            playerGettingScoredAgainst.gamesStorage.get(playerGettingScoredAgainst.currentGame));
-        playerGettingScoredAgainst.currentGame += 1;
-        this.currentGame += 1;
+      checkIfTiebreak(this, playerGettingScoredAgainst);
 
-      }
-      this.hasAdvantage = false;
-      this.printADOrNot = "";
+      checkIfEnoughGamesForSet(this, playerGettingScoredAgainst);
+
+      //Advantage is always set false and wil be checked for after every point scored
+      setAdvantageFalse(this);
       return;
     }
 
+    //if Player scores in a state where no Player has 6 games (bc that would mean its a Tiebreak)
+    if (this.gamesStorage.get(currentGame) != 6 ||
+        playerGettingScoredAgainst.gamesStorage.get(currentGame) != 6) {
+
+      scoredWhileNoTiebreak(playerGettingScoredAgainst);
+
+    } else {
+      /*this.setPoints(this.getPoints() + 1);
+      if (this.getPoints() >= 6 && this.getPoints() > playerGettingScoredAgainst.getPoints()) {
+        setAdvantageTrue(this);
+      } else if (this.getPoints() == playerGettingScoredAgainst.getPoints()) {
+        setAdvantageFalse(playerGettingScoredAgainst);
+      }
+      if (this.getPoints() >= 7 && this.getPoints() > playerGettingScoredAgainst.getPoints() + 1) {
+        setPointsOfBothPlayersZero(this, playerGettingScoredAgainst);
+        tiebreak = false;
+      }
+
+       */
+      scoredwhileTiebreak(playerGettingScoredAgainst);
+    }
+  }
+
+  private void scoredwhileTiebreak(Player playerGettingScoredAgainst){
+
+    this.setPoints(this.getPoints() + 1);
+
+    //if scoring player has 6 or more points and more than opponent he gets and advantage
+    if (this.getPoints() >= 6 && this.getPoints() > playerGettingScoredAgainst.getPoints()) {
+      setAdvantageTrue(this);
+    } else if (this.getPoints() == playerGettingScoredAgainst.getPoints()) {
+      setAdvantageFalse(playerGettingScoredAgainst);
+    }
+
+    //if scoring Player has 7 or more Points and a two Point gap to other Player he won the game
+    if (this.getPoints() >= 7 && this.getPoints() > playerGettingScoredAgainst.getPoints() + 1) {
+      setPointsOfBothPlayersZero(this, playerGettingScoredAgainst);
+      tiebreak = false;
+    }
+  }
+
+  private void scoredWhileNoTiebreak(Player playerGettingScoredAgainst){
     if (this.getPoints() == 40) {
-      if (playerGettingScoredAgainst.getPoints() != 40 ||
-          !playerGettingScoredAgainst.hasAdvantage) {
-        this.hasAdvantage = true;
-        this.printADOrNot = " AD";
-      } else if (this.getPoints() == 40 && playerGettingScoredAgainst.hasAdvantage) {
-        playerGettingScoredAgainst.hasAdvantage = false;
-        playerGettingScoredAgainst.printADOrNot = "";
-      }
+      scoringwhileHavingFourtyPoints(playerGettingScoredAgainst);
     }
 
-      if (this.getPoints() == 30){
-        this.setPoints(40);
-        playerGettingScoredAgainst.hasAdvantage = false;
-        playerGettingScoredAgainst.printADOrNot = "";
-        if (this.getPoints() > playerGettingScoredAgainst.getPoints()){
-          this.hasAdvantage = true;
-          this.printADOrNot = " AD";
-        }
-      }
+    if (this.getPoints() == 30) {
+     scoringWhileHavingThirtyPoints(playerGettingScoredAgainst);
+    }
 
-      if (this.getPoints() <= 30){
-        this.setPoints(this.getPoints()+15);
-      }
-  }
-
-
-  public void checkIfSetIsWon() {
-    if (this.getGames() == 3) {
-      this.setSets(this.getSets() + 1);
+    if (this.getPoints() <= 30) {
+      this.setPoints(this.getPoints() + 15);
     }
   }
 
-  public void setTrue(){
-    this.playerOneWon = true;
+  private void scoringwhileHavingFourtyPoints(Player playerGettingScoredAgainst){
+    if (playerGettingScoredAgainst.getPoints() != 40 ||
+        !playerGettingScoredAgainst.hasAdvantage) {
+      setAdvantageTrue(this);
+    } else {
+      setAdvantageFalse(playerGettingScoredAgainst);
+    }
   }
+
+  private void scoringWhileHavingThirtyPoints(Player playerGettingScoredAgainst){
+    this.setPoints(40);
+    setAdvantageFalse(playerGettingScoredAgainst);
+    if (this.getPoints() > playerGettingScoredAgainst.getPoints()) {
+      setAdvantageTrue(this);
+    }
+  }
+
+
+  private void setAdvantageTrue(Player playerToSetAdvantageTrueFor){
+    playerToSetAdvantageTrueFor.hasAdvantage = true;
+    playerToSetAdvantageTrueFor.printADOrNot = " AD";
+  }
+
+  private void setAdvantageFalse(Player playerToSetAdvantageFalseFor){
+    playerToSetAdvantageFalseFor.hasAdvantage = false;
+    playerToSetAdvantageFalseFor.printADOrNot = " ";
+  }
+
+  private void checkIfEnoughGamesForSet(Player scoringPlayer, Player playerGettingScoredAgainst){
+    int differenceInGames =
+        Math.abs(
+            scoringPlayer.gamesStorage.get(scoringPlayer.currentGame) - playerGettingScoredAgainst.gamesStorage.get(
+                playerGettingScoredAgainst.currentGame));
+    if (scoringPlayer.gamesStorage.get(currentGame) >= 6 && differenceInGames >= 2 ||
+        scoringPlayer.gamesStorage.get(currentGame) == 7) {
+      scoringPlayer.setSets(scoringPlayer.getSets() + 1);
+
+      scoringPlayer.gamesStorage.add(0);
+      playerGettingScoredAgainst.gamesStorage.add(0);
+
+      playerGettingScoredAgainst.gamesStorage.set(currentGame,
+          playerGettingScoredAgainst.gamesStorage.get(playerGettingScoredAgainst.currentGame));
+      playerGettingScoredAgainst.currentGame += 1;
+      scoringPlayer.currentGame += 1;
+    }
+  }
+
+
+  private void checkIfTiebreak(Player scoringPlayer, Player playerGettingScoredAgainst){
+    if (scoringPlayer.gamesStorage.get(currentGame) == 6 &&
+        playerGettingScoredAgainst.gamesStorage.get(currentGame) == 6) {
+      scoringPlayer.tiebreak = true;
+      playerGettingScoredAgainst.tiebreak = true;
+    } else {
+      scoringPlayer.tiebreak = false;
+      playerGettingScoredAgainst.tiebreak = false;
+    }
+  }
+
+  private void setPointsOfBothPlayersZero(Player scoringPlayer, Player playerGettingScoredAgainst) {
+    scoringPlayer.setPoints(0);
+    playerGettingScoredAgainst.setPoints(0);
+  }
+
 
   public String getScoreOfPlayer(Player player) {
-    return  player.getName() + " " + player.getSets() + " " +
+    return player.getName() + " " + player.getSets() + " " +
         player.gamesStorage + " " +
         player.getPoints() +
         player.printADOrNot;
