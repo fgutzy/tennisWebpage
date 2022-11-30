@@ -76,18 +76,6 @@ public class Player {
       scoredWhileNoTiebreak(playerGettingScoredAgainst);
 
     } else {
-      /*this.setPoints(this.getPoints() + 1);
-      if (this.getPoints() >= 6 && this.getPoints() > playerGettingScoredAgainst.getPoints()) {
-        setAdvantageTrue(this);
-      } else if (this.getPoints() == playerGettingScoredAgainst.getPoints()) {
-        setAdvantageFalse(playerGettingScoredAgainst);
-      }
-      if (this.getPoints() >= 7 && this.getPoints() > playerGettingScoredAgainst.getPoints() + 1) {
-        setPointsOfBothPlayersZero(this, playerGettingScoredAgainst);
-        tiebreak = false;
-      }
-
-       */
       scoredwhileTiebreak(playerGettingScoredAgainst);
     }
   }
