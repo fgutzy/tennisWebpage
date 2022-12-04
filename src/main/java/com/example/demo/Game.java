@@ -40,22 +40,25 @@ public class Game extends VerticalLayout {
     var playerOneButton = new Button(playerOneNameField.getValue());
     var playerTwoButton = new Button(playerTwoNameField.getValue());
 
+
+
+
     //create players but set name after start button was pressed (cant take value from name field without refresh)
     Player playerOne = new Player("");
     Player playerTwo = new Player("");
 
-    IntegerField integerField = new IntegerField();
-    integerField.setLabel("Sets needed to win");
-    integerField.setHelperText("Can be changed in-game");
-    integerField.setWidth("180px");
-    integerField.setMin(1);
-    integerField.setMax(9);
-    integerField.setValue(2);
-    integerField.setHasControls(true);
+    IntegerField buttonChoosingSetsNeededToWin = new IntegerField();
+    buttonChoosingSetsNeededToWin.setLabel("Sets needed to win");
+    buttonChoosingSetsNeededToWin.setHelperText("Can be changed in-game");
+    buttonChoosingSetsNeededToWin.setWidth("180px");
+    buttonChoosingSetsNeededToWin.setMin(1);
+    buttonChoosingSetsNeededToWin.setMax(9);
+    buttonChoosingSetsNeededToWin.setValue(2);
+    buttonChoosingSetsNeededToWin.setHasControls(true);
 
     // put fields and buttons in a variable
     var playerAndSetInputFields =
-        new HorizontalLayout(playerOneNameField, playerTwoNameField, integerField);
+        new HorizontalLayout(playerOneNameField, playerTwoNameField, buttonChoosingSetsNeededToWin);
     var alignedStartButton = new HorizontalLayout(startOrEndButton); //button in new line
 
     //allign items accordingly
@@ -66,16 +69,25 @@ public class Game extends VerticalLayout {
     //startOrEndButton is clicked
     startOrEndButton.addClickListener(e -> {
 
-      //set Player names with input from textfields
-      playerOne.setName(playerOneNameField.getValue());
-      playerTwo.setName(playerTwoNameField.getValue());
-
-      //method for filling up length differences in names to be more esthetic
-      bringNamesToSameLength(playerOne, playerTwo);
+      //if no input for a players name set it with Player One/Player Two
+      if(playerOneNameField.getValue().isEmpty()){
+        playerOneNameField.setValue("Player One");
+      }
+      if(playerTwoNameField.getValue().isEmpty()){
+        playerTwoNameField.setValue("Player Two");
+      }
 
       //after game is started change the buttons text, colour and display the score (0,0),
       // and create buttons with name of players
       if (firstClickOnStartOrEndButton) {
+
+        //set Player names with input from textfields
+        playerOne.setName(playerOneNameField.getValue());
+        playerTwo.setName(playerTwoNameField.getValue());
+
+
+        //method for filling up length differences in names to be more esthetic
+        bringNamesToSameLength(playerOne, playerTwo);
 
         startOrEndButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         startOrEndButton.setText("End Game");
@@ -94,6 +106,8 @@ public class Game extends VerticalLayout {
         playerOne.gamesStorage.add(0);
         playerTwo.gamesStorage.add(0);
 
+        //deactivate buttons for name input after game is started
+        setPlayerFieldsFalse(playerOneNameField, playerTwoNameField);
 
         firstClickOnStartOrEndButton = false;
 
@@ -111,8 +125,7 @@ public class Game extends VerticalLayout {
         add(dialog);
       }
 
-      //deactivate buttons for name input after game is started
-      setPlayerFieldsFalse(playerOneNameField, playerTwoNameField);
+
     });
 
     //when cutton of player is pressed, call scorePoint method and set score for both players
@@ -121,7 +134,7 @@ public class Game extends VerticalLayout {
 
       checkForTiebreak(playerOne, tiebreakMessage);
 
-      if (playerOne.getSets() == integerField.getValue()) { //check if enough sets to win the game
+      if (playerOne.getSets() == buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
 
         gameWon = true;
 
@@ -132,7 +145,7 @@ public class Game extends VerticalLayout {
         add(playerWonMessage);
 
         //buttons cant be pressed after game is over
-        setPlayerButtonsFalse(playerOneButton, playerTwoButton);
+        setPlayerButtonsFalse(playerOneButton, playerTwoButton, buttonChoosingSetsNeededToWin);
 
         //startOrEndButton can create new game
         startOrEndButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_CONTRAST);
@@ -149,7 +162,7 @@ public class Game extends VerticalLayout {
 
       checkForTiebreak(playerTwo, tiebreakMessage);
 
-      if (playerTwo.getSets() == integerField.getValue()) { //check if enough sets to win the game
+      if (playerTwo.getSets() == buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
 
         gameWon = true;
 
@@ -157,7 +170,7 @@ public class Game extends VerticalLayout {
         removeLastGame(playerOne, playerTwo);
 
         //buttons cant be pressed after game is over
-        setPlayerButtonsFalse(playerOneButton, playerTwoButton);
+        setPlayerButtonsFalse(playerOneButton, playerTwoButton, buttonChoosingSetsNeededToWin);
 
         //create Message that Player won
         var playerWonMessage = new Paragraph(playerTwo.getName() + " has won");
@@ -205,9 +218,10 @@ public class Game extends VerticalLayout {
   }
 
 
-  private static void setPlayerButtonsFalse(Button playerOneButton, Button playerTwoButton) {
+  private static void setPlayerButtonsFalse(Button playerOneButton, Button playerTwoButton, IntegerField buttonChoosingSetsNeededToWin){
     playerOneButton.setEnabled(false);
     playerTwoButton.setEnabled(false);
+    buttonChoosingSetsNeededToWin.setEnabled(false);
   }
 
   private static void setPlayerFieldsFalse(TextField playerOneField, TextField playerTwoField) {
