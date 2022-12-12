@@ -1,9 +1,12 @@
 package com.example.demo;
 
+import com.example.demo.repository.PlayerRepository;
+import com.example.demo.service.PlayerService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.button.Button;
@@ -11,12 +14,23 @@ import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.router.Route;
+import java.util.LinkedList;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 @Route("")
 public class Game extends VerticalLayout {
 
+//  private PlayerRepository playerRepository;
+
+  @Autowired
+  PlayerService playerService;
+
+
   boolean firstClickOnStartOrEndButton = true;
   boolean gameWon = false;
+  List<Player> winnerList;
 
   public Game() {
 
@@ -47,6 +61,7 @@ public class Game extends VerticalLayout {
     Player playerOne = new Player("");
     Player playerTwo = new Player("");
 
+
     IntegerField buttonChoosingSetsNeededToWin = new IntegerField();
     buttonChoosingSetsNeededToWin.setLabel("Sets needed to win");
     buttonChoosingSetsNeededToWin.setHelperText("Can be changed in-game");
@@ -66,12 +81,17 @@ public class Game extends VerticalLayout {
     alignedStartButton.setVerticalComponentAlignment(Alignment.CENTER);
 
 
+
+
     //startOrEndButton is clicked
     startOrEndButton.addClickListener(e -> {
 
       //if no input for a players name set it with Player One/Player Two
       if(playerOneNameField.getValue().isEmpty()){
         playerOneNameField.setValue("Player One");
+
+        //playerRepository.save(playerOne);
+        //h2 adden // sql
       }
       if(playerTwoNameField.getValue().isEmpty()){
         playerTwoNameField.setValue("Player Two");
@@ -130,7 +150,9 @@ public class Game extends VerticalLayout {
 
     //when cutton of player is pressed, call scorePoint method and set score for both players
     playerOneButton.addClickListener(o -> {
-      playerOne.scoredPointAgainst(playerTwo);
+     // playerOne.scoredPointAgainst(playerTwo);
+      playerService.pointScored(playerOne, playerTwo);
+     // playerService.addOne(playerOne);
 
       checkForTiebreak(playerOne, tiebreakMessage);
 
@@ -158,7 +180,8 @@ public class Game extends VerticalLayout {
     });
 
     playerTwoButton.addClickListener(o -> {
-      playerTwo.scoredPointAgainst(playerOne);
+      //playerTwo.scoredPointAgainst(playerOne);
+      playerService.pointScored(playerTwo, playerOne);
 
       checkForTiebreak(playerTwo, tiebreakMessage);
 
@@ -175,6 +198,7 @@ public class Game extends VerticalLayout {
         //create Message that Player won
         var playerWonMessage = new Paragraph(playerTwo.getName() + " has won");
         add(playerWonMessage);
+        winnerList.add(playerTwo);
 
         //startOrEndButton can create new game
         startOrEndButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_CONTRAST);
