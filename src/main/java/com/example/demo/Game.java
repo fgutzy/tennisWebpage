@@ -1,12 +1,11 @@
 package com.example.demo;
 
-import com.example.demo.repository.PlayerRepository;
+import com.example.demo.service.GameService;
 import com.example.demo.service.PlayerService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.button.Button;
@@ -14,25 +13,21 @@ import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.router.Route;
-import java.util.LinkedList;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-
 
 @Route("")
 public class Game extends VerticalLayout {
 
-//  private PlayerRepository playerRepository;
+  boolean startClick = true;
 
   @Autowired
   PlayerService playerService;
 
-
-  boolean firstClickOnStartOrEndButton = true;
-  boolean gameWon = false;
-  List<Player> winnerList;
+  @Autowired
+  GameService gameService;
 
   public Game() {
+
 
     //create Message but dont initialize (will be done in the method that checks if tiebreak is happening)
     var tiebreakMessage = new Paragraph("");
@@ -55,12 +50,9 @@ public class Game extends VerticalLayout {
     var playerTwoButton = new Button(playerTwoNameField.getValue());
 
 
-
-
     //create players but set name after start button was pressed (cant take value from name field without refresh)
     Player playerOne = new Player("");
     Player playerTwo = new Player("");
-
 
     IntegerField buttonChoosingSetsNeededToWin = new IntegerField();
     buttonChoosingSetsNeededToWin.setLabel("Sets needed to win");
@@ -81,187 +73,76 @@ public class Game extends VerticalLayout {
     alignedStartButton.setVerticalComponentAlignment(Alignment.CENTER);
 
 
-
-
     //startOrEndButton is clicked
     startOrEndButton.addClickListener(e -> {
 
-      //if no input for a players name set it with Player One/Player Two
-      if(playerOneNameField.getValue().isEmpty()){
-        playerOneNameField.setValue("Player One");
-
-        //playerRepository.save(playerOne);
-        //h2 adden // sql
-      }
-      if(playerTwoNameField.getValue().isEmpty()){
-        playerTwoNameField.setValue("Player Two");
-      }
+      gameService.setPlayerNames(playerOne, playerOneNameField, playerTwo, playerTwoNameField);
 
       //after game is started change the buttons text, colour and display the score (0,0),
       // and create buttons with name of players
-      if (firstClickOnStartOrEndButton) {
-
-        //set Player names with input from textfields
-        playerOne.setName(playerOneNameField.getValue());
-        playerTwo.setName(playerTwoNameField.getValue());
-
+      if (startClick) {
 
         //method for filling up length differences in names to be more esthetic
-        bringNamesToSameLength(playerOne, playerTwo);
 
-        startOrEndButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-        startOrEndButton.setText("End Game");
-
-        getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
+        gameService.setVariablesReadyForGame(playerOne, playerOneNameField, playerOneButton, playerTwo, playerTwoNameField,
+            playerTwoButton, startOrEndButton, scoreLabelPlayerOne, scoreLabelPlayerTwo);
 
         var displayScore = new VerticalLayout(scoreLabelPlayerOne, scoreLabelPlayerTwo);
         var playOngoing = new HorizontalLayout(playerOneButton, playerTwoButton);
         displayScore.setAlignItems(Alignment.CENTER);
         add(displayScore ,playOngoing, tiebreakMessage);
 
-        playerOneButton.setText(playerOneNameField.getValue());
-        playerTwoButton.setText(playerTwoNameField.getValue());
-
-        //initialize gamesStorage with 0 for both players
-        playerOne.gamesStorage.add(0);
-        playerTwo.gamesStorage.add(0);
-
-        //deactivate buttons for name input after game is started
-        setPlayerFieldsFalse(playerOneNameField, playerTwoNameField);
-
-        firstClickOnStartOrEndButton = false;
+        startClick = false;
 
       } else { //if startOrEndButton is clicked after game was started change show pop up to make sure user wants to end
 
         Dialog dialog = new Dialog();
-        dialog.setHeaderTitle("End Game?");
-
-        Button endGameButton = new Button("Yes, End Game", g -> UI.getCurrent().getPage().reload());
-        Button cancelButton = new Button("Cancel", i -> dialog.close());
-        dialog.getFooter().add(cancelButton);
-        dialog.getFooter().add(endGameButton);
-        dialog.open();
-
+        gameService.setDialog(dialog);
         add(dialog);
       }
 
 
     });
 
-    //when cutton of player is pressed, call scorePoint method and set score for both players
+    //when button of player is pressed, call scorePoint method and set score for both players
     playerOneButton.addClickListener(o -> {
-     // playerOne.scoredPointAgainst(playerTwo);
-      playerService.pointScored(playerOne, playerTwo);
-     // playerService.addOne(playerOne);
 
-      checkForTiebreak(playerOne, tiebreakMessage);
+      playerService.pointScored(playerOne, playerTwo, tiebreakMessage);
 
       if (playerOne.getSets() == buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
 
-        gameWon = true;
-
-        //remove last object (bc 0 was added after game was over)
-        removeLastGame(playerOne, playerTwo);
+        gameService.setValuesToEndGame(playerOne, playerOneButton, playerTwo, playerTwoButton,
+            startOrEndButton, buttonChoosingSetsNeededToWin);
 
         var playerWonMessage = new Paragraph(playerOne.getName() + " has won");
         add(playerWonMessage);
-
-        //buttons cant be pressed after game is over
-        setPlayerButtonsFalse(playerOneButton, playerTwoButton, buttonChoosingSetsNeededToWin);
-
-        //startOrEndButton can create new game
-        startOrEndButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_CONTRAST);
-        startOrEndButton.setText("Start New Game");
       }
 
       //set score for players after check if game wis won
-      getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
+      gameService.getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
 
     });
 
     playerTwoButton.addClickListener(o -> {
-      //playerTwo.scoredPointAgainst(playerOne);
-      playerService.pointScored(playerTwo, playerOne);
 
-      checkForTiebreak(playerTwo, tiebreakMessage);
+      playerService.pointScored(playerTwo, playerOne, tiebreakMessage);
 
       if (playerTwo.getSets() == buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
 
-        gameWon = true;
-
-        //remove last object (bc 0 was added after game was over)
-        removeLastGame(playerOne, playerTwo);
-
-        //buttons cant be pressed after game is over
-        setPlayerButtonsFalse(playerOneButton, playerTwoButton, buttonChoosingSetsNeededToWin);
+        gameService.setValuesToEndGame(playerOne, playerOneButton, playerTwo, playerTwoButton,
+            startOrEndButton, buttonChoosingSetsNeededToWin);
 
         //create Message that Player won
         var playerWonMessage = new Paragraph(playerTwo.getName() + " has won");
         add(playerWonMessage);
-        winnerList.add(playerTwo);
-
-        //startOrEndButton can create new game
-        startOrEndButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_CONTRAST);
-        startOrEndButton.setText("Start New Game");
       }
 
       //set score for players after check if game is won
-      getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
+      gameService.getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
     });
 
     add(playerAndSetInputFields, alignedStartButton);
     setAlignItems(Alignment.CENTER);
-  }
-
-
-  private static void checkForTiebreak(Player player, Paragraph paragraph){
-    if (player.tiebreak){
-      paragraph.setText("Tiebreak!");
-    }else {
-      paragraph.setText("");
-    }
-  }
-
-
-  private static void bringNamesToSameLength(Player playerOne, Player playerTwo){
-    StringBuilder toChange;
-
-    if (playerOne.getName().length() != playerTwo.getName().length()) {
-
-      int lengthDifference =
-          Math.abs(playerOne.getName().length() - playerTwo.getName().length()) * 2 - 2;
-
-      if (playerOne.getName().length() < playerTwo.getName().length()) {
-        toChange = new StringBuilder(playerOne.getName());
-        playerOne.setName(toChange.append("\u00a0".repeat(Math.max(0, lengthDifference))).toString());
-      } else {
-        toChange = new StringBuilder(playerTwo.getName());
-        playerTwo.setName(toChange.append("\u00a0".repeat(Math.max(0, lengthDifference))).toString());
-      }
-    }
-  }
-
-
-  private static void setPlayerButtonsFalse(Button playerOneButton, Button playerTwoButton, IntegerField buttonChoosingSetsNeededToWin){
-    playerOneButton.setEnabled(false);
-    playerTwoButton.setEnabled(false);
-    buttonChoosingSetsNeededToWin.setEnabled(false);
-  }
-
-  private static void setPlayerFieldsFalse(TextField playerOneField, TextField playerTwoField) {
-    playerOneField.setEnabled(false);
-    playerTwoField.setEnabled(false);
-  }
-
-  private static void getScore(Label lableOfPlayerOne, Player playerOne, Label labelOfPlayerTwo,
-                               Player playerTwo) {
-    lableOfPlayerOne.setText(playerOne.getScoreOfPlayer());
-    labelOfPlayerTwo.setText(playerTwo.getScoreOfPlayer());
-  }
-
-  private static void removeLastGame(Player playerOne, Player playerTwo){
-    playerOne.gamesStorage.remove(playerOne.gamesStorage.size() - 1);
-    playerTwo.gamesStorage.remove(playerTwo.gamesStorage.size() - 1);
   }
 
 }

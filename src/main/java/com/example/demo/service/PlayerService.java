@@ -2,13 +2,14 @@ package com.example.demo.service;
 
 import com.example.demo.Player;
 import com.example.demo.repository.PlayerRepository;
+import com.vaadin.flow.component.html.Paragraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PlayerService {
 
-  int currentGame = 0;
+  public int currentGame = 0;
 
 /*
   @Autowired
@@ -16,7 +17,14 @@ public class PlayerService {
  */
 
 
-  public void pointScored(Player scoringPlayer, Player playerGettingScoredAgainst) {
+  public void pointScored(Player playerOne, Player playerTwo, Paragraph tiebreakMessage){
+
+    pointScoredInternal(playerOne, playerTwo);
+
+    checkForTiebreak(playerOne, tiebreakMessage);
+  }
+
+  public void pointScoredInternal(Player scoringPlayer, Player playerGettingScoredAgainst) {
 
     //if player scored while having an Advantage
     if (scoringPlayer.hasAdvantage) {
@@ -139,6 +147,37 @@ public class PlayerService {
   private void setPointsOfBothPlayersZero(Player scoringPlayer, Player playerGettingScoredAgainst) {
     scoringPlayer.setPoints(0);
     playerGettingScoredAgainst.setPoints(0);
+  }
+
+  public void bringNamesToSameLength(Player playerOne, Player playerTwo){
+    StringBuilder toChange;
+
+    if (playerOne.getName().length() != playerTwo.getName().length()) {
+
+      int lengthDifference =
+          Math.abs(playerOne.getName().length() - playerTwo.getName().length()) * 2 - 2;
+
+      if (playerOne.getName().length() < playerTwo.getName().length()) {
+        toChange = new StringBuilder(playerOne.getName());
+        playerOne.setName(toChange.append("\u00a0".repeat(Math.max(0, lengthDifference))).toString());
+      } else {
+        toChange = new StringBuilder(playerTwo.getName());
+        playerTwo.setName(toChange.append("\u00a0".repeat(Math.max(0, lengthDifference))).toString());
+      }
+    }
+  }
+
+  public void removeLastGame(Player playerOne, Player playerTwo){
+    playerOne.gamesStorage.remove(playerOne.gamesStorage.size() - 1);
+    playerTwo.gamesStorage.remove(playerTwo.gamesStorage.size() - 1);
+  }
+
+  public void checkForTiebreak(Player player, Paragraph paragraph){
+    if (player.tiebreak){
+      paragraph.setText("Tiebreak!");
+    }else {
+      paragraph.setText("");
+    }
   }
 
 }
