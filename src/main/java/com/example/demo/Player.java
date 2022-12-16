@@ -1,25 +1,50 @@
 package com.example.demo;
 
 import java.util.ArrayList;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
+import javax.persistence.*;
+import lombok.*;
 
 
 @Entity
+@Data
+@Table(name = "tbl_player")
+@NoArgsConstructor
 public class Player {
 
   @Id
+  @SequenceGenerator(name = "player_sequence",
+          sequenceName = "player_sequence",
+          allocationSize = 1
+  )
+  @GeneratedValue(
+      strategy = GenerationType.SEQUENCE,
+      generator = "player_sequence"
+  )
+  int id;
+
   @Getter
   @Setter
+  @Column(name = "Name_of_Player")
   String name;
 
   public ArrayList<Integer> gamesStorage = new ArrayList<>();
 
   @Getter
   @Setter
+  int gamesWon = 0;
+
+  @Getter
+  @Setter
+  int gamesLost = 0;
+
+  @Getter
+  @Setter
+  int gamesPlayed = 0;
+
+  @Getter
+  @Setter
   int sets = 0;
+
 
   @Getter
   @Setter
@@ -38,6 +63,12 @@ public class Player {
   public Player(String name) {
     this.name = name;
   }
+
+  public Player( int id, String name){
+    this.id = id;
+    this.name = name;
+  }
+
 
   public String getScoreOfPlayer() {
     return this.getName() + " " + this.getSets() + " " +

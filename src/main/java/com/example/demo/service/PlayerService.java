@@ -3,18 +3,23 @@ package com.example.demo.service;
 import com.example.demo.Player;
 import com.example.demo.repository.PlayerRepository;
 import com.vaadin.flow.component.html.Paragraph;
+import java.sql.SQLException;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PlayerService {
 
+
   public int currentGame = 0;
 
-/*
+
   @Autowired
   private PlayerRepository playerRepository;
- */
+
+  public PlayerService() throws SQLException {
+  }
 
 
   public void pointScored(Player playerOne, Player playerTwo, Paragraph tiebreakMessage){
@@ -180,4 +185,31 @@ public class PlayerService {
     }
   }
 
-}
+  public List<Player> findAll(String filteredText) {
+
+    //return all Players if no filter was applied
+    if (filteredText == null || filteredText.isEmpty()){
+      return playerRepository.findAll();
+    }
+
+    else{ //else return the Player whos name is containing the filteredText value
+      return playerRepository.findPlayerByNameContaining(filteredText);
+    }
+  }
+
+  /**
+   * Method to count wins and loses of a player
+   */
+
+  public void countWinOrLoss(Player winningPlayer, Player losingPlayer){
+
+    winningPlayer.setGamesPlayed(winningPlayer.getGamesPlayed()+1);
+    losingPlayer.setGamesPlayed(losingPlayer.getGamesPlayed()+1);
+
+    winningPlayer.setGamesWon(+1);
+    losingPlayer.setGamesLost(+1);
+  }
+  }
+
+
+

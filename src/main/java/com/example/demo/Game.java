@@ -1,8 +1,9 @@
 package com.example.demo;
 
+import com.example.demo.repository.PlayerRepository;
 import com.example.demo.service.GameService;
 import com.example.demo.service.PlayerService;
-import com.vaadin.flow.component.UI;
+import com.example.demo.service.SQLService;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
@@ -12,6 +13,8 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.dialog.Dialog;
+import javax.sql.DataSource;
+import java.sql.*;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,7 +29,14 @@ public class Game extends VerticalLayout {
   @Autowired
   GameService gameService;
 
-  public Game() {
+  @Autowired
+  PlayerRepository playerRepository;
+
+  @Autowired
+  SQLService sqlService;
+
+
+  public Game() throws SQLException {
 
 
     //create Message but dont initialize (will be done in the method that checks if tiebreak is happening)
@@ -51,8 +61,9 @@ public class Game extends VerticalLayout {
 
 
     //create players but set name after start button was pressed (cant take value from name field without refresh)
-    Player playerOne = new Player("");
+    Player playerOne = new Player();
     Player playerTwo = new Player("");
+
 
     IntegerField buttonChoosingSetsNeededToWin = new IntegerField();
     buttonChoosingSetsNeededToWin.setLabel("Sets needed to win");
@@ -73,10 +84,23 @@ public class Game extends VerticalLayout {
     alignedStartButton.setVerticalComponentAlignment(Alignment.CENTER);
 
 
+/*    String url = "jdbc:mysql://localhost:3306/tennis_db";
+    String username = "root";
+    String password = "rootpassword";
+
+    Connection conn = DriverManager.getConnection(url, username, password);
+
+ */
+
+
+
+
+
     //startOrEndButton is clicked
     startOrEndButton.addClickListener(e -> {
 
       gameService.setPlayerNames(playerOne, playerOneNameField, playerTwo, playerTwoNameField);
+
 
       //after game is started change the buttons text, colour and display the score (0,0),
       // and create buttons with name of players
@@ -84,13 +108,20 @@ public class Game extends VerticalLayout {
 
         //method for filling up length differences in names to be more esthetic
 
-        gameService.setVariablesReadyForGame(playerOne, playerOneNameField, playerOneButton, playerTwo, playerTwoNameField,
-            playerTwoButton, startOrEndButton, scoreLabelPlayerOne, scoreLabelPlayerTwo);
+        gameService
+            .setVariablesReadyForGame(playerOne, playerOneNameField, playerOneButton, playerTwo,
+                playerTwoNameField,
+                playerTwoButton, startOrEndButton, scoreLabelPlayerOne, scoreLabelPlayerTwo);
+
+        playerRepository.save(playerOne);
+        playerRepository.save(playerTwo);
+
+        gameService.winnerList.add(playerOne);
 
         var displayScore = new VerticalLayout(scoreLabelPlayerOne, scoreLabelPlayerTwo);
         var playOngoing = new HorizontalLayout(playerOneButton, playerTwoButton);
         displayScore.setAlignItems(Alignment.CENTER);
-        add(displayScore ,playOngoing, tiebreakMessage);
+        add(displayScore, playOngoing, tiebreakMessage);
 
         startClick = false;
 
@@ -109,10 +140,15 @@ public class Game extends VerticalLayout {
 
       playerService.pointScored(playerOne, playerTwo, tiebreakMessage);
 
-      if (playerOne.getSets() == buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
+      if (playerOne.getSets() ==
+          buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
 
+        //deacitvates all fields and updates the according result in SQL
         gameService.setValuesToEndGame(playerOne, playerOneButton, playerTwo, playerTwoButton,
             startOrEndButton, buttonChoosingSetsNeededToWin);
+
+        //testing Phase to store value of how many games played
+        playerService.countWinOrLoss(playerOne, playerTwo);
 
         var playerWonMessage = new Paragraph(playerOne.getName() + " has won");
         add(playerWonMessage);
@@ -121,20 +157,25 @@ public class Game extends VerticalLayout {
       //set score for players after check if game wis won
       gameService.getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
 
+
     });
 
     playerTwoButton.addClickListener(o -> {
 
       playerService.pointScored(playerTwo, playerOne, tiebreakMessage);
 
-      if (playerTwo.getSets() == buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
+      if (playerTwo.getSets() ==
+          buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
 
-        gameService.setValuesToEndGame(playerOne, playerOneButton, playerTwo, playerTwoButton,
+        //deacitvates all fields and updates the according result in SQL
+        gameService.setValuesToEndGame(playerTwo, playerTwoButton, playerOne, playerTwoButton,
             startOrEndButton, buttonChoosingSetsNeededToWin);
+
 
         //create Message that Player won
         var playerWonMessage = new Paragraph(playerTwo.getName() + " has won");
         add(playerWonMessage);
+
       }
 
       //set score for players after check if game is won
