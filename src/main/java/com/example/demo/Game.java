@@ -1,26 +1,33 @@
 package com.example.demo;
 
-import com.example.demo.repository.PlayerRepository;
 import com.example.demo.service.GameService;
+import com.example.demo.service.LogInService;
 import com.example.demo.service.PlayerService;
-import com.example.demo.service.SQLService;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.dialog.Dialog;
-import javax.sql.DataSource;
-import java.sql.*;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route("")
+//@PermitAll
+@Route("/game")
+@PageTitle("Game")
+//@Component
+//@ComponentScan
+//@NoArgsConstructor
 public class Game extends VerticalLayout {
 
+
+  boolean siteWasentered = false;
   boolean startClick = true;
 
   @Autowired
@@ -30,13 +37,37 @@ public class Game extends VerticalLayout {
   GameService gameService;
 
   @Autowired
-  PlayerRepository playerRepository;
+  LogInService logInService;
 
-  @Autowired
-  SQLService sqlService;
+  //public void buildWebsite() {
+
+ // }
+
+    public Game() throws SQLException {
+
+    siteWasentered = true;
+
+    Button loginLogoutButton = new Button();
+    if (!playerService.loggedInOrNot){
+      loginLogoutButton.setText("Log In");
+    }else loginLogoutButton.setText("Log Out");
+
+    loginLogoutButton.addClickListener(event -> {
+      try {
+        Thread.sleep(1500);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      UI.getCurrent().navigate("/login");
+      logInService.setNameOfLoggedInUser("");
+      logInService.setLoginSuccesfull(false);
+      playerService.setLoggedInOrNot(false);
+
+    });
 
 
-  public Game() throws SQLException {
+    HorizontalLayout header = new HorizontalLayout(loginLogoutButton);
+    add(header);
 
 
     //create Message but dont initialize (will be done in the method that checks if tiebreak is happening)
@@ -46,7 +77,10 @@ public class Game extends VerticalLayout {
     Label scoreLabelPlayerOne = new Label();
     Label scoreLabelPlayerTwo = new Label();
 
-    var playerOneNameField = new TextField("Enter name of Player one");
+    var playerOneNameField = new TextField("Enter name of player one");
+    //if logged in, take user name and set field disabled
+    gameService.setNameFields(playerOneNameField);
+
     var playerTwoNameField = new TextField("Enter name of Player two");
     playerOneNameField.setMaxLength(16);
     playerOneNameField.setHelperText("Max 16 letters");
@@ -61,7 +95,7 @@ public class Game extends VerticalLayout {
 
 
     //create players but set name after start button was pressed (cant take value from name field without refresh)
-    Player playerOne = new Player();
+    Player playerOne = new Player("");
     Player playerTwo = new Player("");
 
 
@@ -74,33 +108,22 @@ public class Game extends VerticalLayout {
     buttonChoosingSetsNeededToWin.setValue(2);
     buttonChoosingSetsNeededToWin.setHasControls(true);
 
+
     // put fields and buttons in a variable
     var playerAndSetInputFields =
         new HorizontalLayout(playerOneNameField, playerTwoNameField, buttonChoosingSetsNeededToWin);
     var alignedStartButton = new HorizontalLayout(startOrEndButton); //button in new line
+
 
     //allign items accordingly
     playerAndSetInputFields.setDefaultVerticalComponentAlignment(Alignment.AUTO);
     alignedStartButton.setVerticalComponentAlignment(Alignment.CENTER);
 
 
-/*    String url = "jdbc:mysql://localhost:3306/tennis_db";
-    String username = "root";
-    String password = "rootpassword";
-
-    Connection conn = DriverManager.getConnection(url, username, password);
-
- */
-
-
-
-
-
     //startOrEndButton is clicked
     startOrEndButton.addClickListener(e -> {
 
       gameService.setPlayerNames(playerOne, playerOneNameField, playerTwo, playerTwoNameField);
-
 
       //after game is started change the buttons text, colour and display the score (0,0),
       // and create buttons with name of players
@@ -113,10 +136,14 @@ public class Game extends VerticalLayout {
                 playerTwoNameField,
                 playerTwoButton, startOrEndButton, scoreLabelPlayerOne, scoreLabelPlayerTwo);
 
+        /*
         playerRepository.save(playerOne);
         playerRepository.save(playerTwo);
 
+
         gameService.winnerList.add(playerOne);
+
+         */
 
         var displayScore = new VerticalLayout(scoreLabelPlayerOne, scoreLabelPlayerTwo);
         var playOngoing = new HorizontalLayout(playerOneButton, playerTwoButton);
@@ -131,8 +158,6 @@ public class Game extends VerticalLayout {
         gameService.setDialog(dialog);
         add(dialog);
       }
-
-
     });
 
     //when button of player is pressed, call scorePoint method and set score for both players
@@ -147,8 +172,12 @@ public class Game extends VerticalLayout {
         gameService.setValuesToEndGame(playerOne, playerOneButton, playerTwo, playerTwoButton,
             startOrEndButton, buttonChoosingSetsNeededToWin);
 
-        //testing Phase to store value of how many games played
-        playerService.countWinOrLoss(playerOne, playerTwo);
+        //updating wins, loses and games played in SQL
+        try {
+          playerService.countWinOrLoss(logInService.getNameOfLoggedInUser());
+        } catch (SQLException throwables) {
+          throwables.printStackTrace();
+        }
 
         var playerWonMessage = new Paragraph(playerOne.getName() + " has won");
         add(playerWonMessage);
@@ -156,7 +185,6 @@ public class Game extends VerticalLayout {
 
       //set score for players after check if game wis won
       gameService.getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
-
 
     });
 
@@ -171,6 +199,15 @@ public class Game extends VerticalLayout {
         gameService.setValuesToEndGame(playerTwo, playerTwoButton, playerOne, playerTwoButton,
             startOrEndButton, buttonChoosingSetsNeededToWin);
 
+        //updating wins, loses and games played in SQL
+        /*
+        try {
+          playerService.countWinOrLoss(playerTwo);
+        } catch (SQLException throwables) {
+          throwables.printStackTrace();
+        }
+
+         */
 
         //create Message that Player won
         var playerWonMessage = new Paragraph(playerTwo.getName() + " has won");
@@ -185,8 +222,58 @@ public class Game extends VerticalLayout {
     add(playerAndSetInputFields, alignedStartButton);
     setAlignItems(Alignment.CENTER);
   }
+/*
+
+  @Override
+  public void beforeEnter(BeforeEnterEvent event) {
+    // This method will be called before the /game route is displayed to the user
+  //  if (logInService.isLoginSuccesfull() || !logInService.isLoginSuccesfull()) {
+      if (siteWasentered){
+        System.out.println("Tried to enter twice");
+        UI.getCurrent().navigate("/login");
+        System.out.println("Tried to enter twice2");
+        //UI.getCurrent().getPage().reload();
+      } else {
+        buildWebsite();
+        System.out.println("bauen");
+      }
+  //  } else UI.getCurrent().navigate("/login");
+  }
+*/
 
 }
+
+/*
+  public void onDetach() {
+    route.removeFromTree();
+
+  }
+
+
+
+  public void handleRequest() {
+    if (loginService.isLoginSuccesfull()) {
+      buildWebsite();
+    } else {
+      System.out.println("redirect to loginPage 2" + loginService.isLoginSuccesfull());
+      UI.getCurrent().navigate("/login");
+    }
+  }
+
+
+@Override
+public void beforeEnter(BeforeEnterEvent event) {
+  if (loginService.isLoginSuccesfull()) {
+    buildWebsite();
+  } else {
+    System.out.println("redirect to loginPage 1" + loginService.isLoginSuccesfull());
+    UI.getCurrent().navigate("/login");
+  }
+}
+}
+   */
+
+
 
 
 

@@ -24,6 +24,10 @@ public class Player {
 
   @Getter
   @Setter
+  String password;
+
+  @Getter
+  @Setter
   @Column(name = "Name_of_Player")
   String name;
 
@@ -45,7 +49,6 @@ public class Player {
   @Setter
   int sets = 0;
 
-
   @Getter
   @Setter
   int games;
@@ -53,6 +56,7 @@ public class Player {
   @Getter
   @Setter
   int points = 0;
+
 
   public boolean hasAdvantage;
   public boolean tiebreak = false;
@@ -64,9 +68,15 @@ public class Player {
     this.name = name;
   }
 
-  public Player( int id, String name){
+  public Player( int id, String name, String password){
     this.id = id;
     this.name = name;
+    this.password = password;
+  }
+
+  public Player( String name, String password){
+    this.name = name;
+    this.password = password;
   }
 
 

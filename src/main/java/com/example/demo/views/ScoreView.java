@@ -1,19 +1,26 @@
-package com.example.demo;
+package com.example.demo.views;
 
 
-import com.example.demo.repository.PlayerRepository;
-import com.example.demo.service.GameService;
+import com.example.demo.Player;
+import com.example.demo.security.SecurityService;
+import com.example.demo.service.LogInService;
 import com.example.demo.service.PlayerService;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.value.ValueChangeMode;
-import com.vaadin.flow.router.Route;
-import java.awt.*;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-@Route("s")
+@Route("leaderboard")
+//@PermitAll
+@PageTitle("Leaderboard")
+
 public class ScoreView extends VerticalLayout {
 
   Grid<Player> grid = new Grid<>(Player.class);
@@ -22,20 +29,46 @@ public class ScoreView extends VerticalLayout {
   private PlayerService playerService;
 
   @Autowired
-  PlayerRepository playerRepository;
+  SecurityService securityService;
 
   @Autowired
-  GameService gameService;
+  LogInService logInService;
 
 
-  public ScoreView(PlayerService playerService) {
+
+  public ScoreView(PlayerService playerService, SecurityService securityService) {
     this.playerService = playerService;
+    this.securityService = securityService;
     addClassName("Score-view");
     setSizeFull();
     configureGrid();
     configureFilter();
 
-    add(filteredText, grid);
+
+
+
+    Button loginLogoutButton = new Button();
+    if (!playerService.loggedInOrNot){
+      loginLogoutButton.setText("Log In");
+    }else loginLogoutButton.setText("Log Out");
+
+    loginLogoutButton.addClickListener(event -> {
+      try {
+        Thread.sleep(1500);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      UI.getCurrent().navigate("/login");
+        logInService.setNameOfLoggedInUser("");
+        logInService.setLoginSuccesfull(false);
+        playerService.setLoggedInOrNot(false);
+
+    });
+
+
+    HorizontalLayout header = new HorizontalLayout(loginLogoutButton);
+
+    add(header, filteredText, grid);
 
     updateList();
 

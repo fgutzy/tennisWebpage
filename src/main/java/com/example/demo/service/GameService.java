@@ -9,10 +9,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
-import java.util.ArrayList;
-import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,16 +18,25 @@ public class GameService {
   @Autowired
   PlayerService playerService;
 
-  @Getter
-  @Setter
-  public List<Player> winnerList = new ArrayList<>();
-
   @Autowired
   SQLService sqlService;
+
+  @Autowired
+  LogInService logInService;
 
 
   public void setPlayerNames(Player playerOne, TextField playerOneNameField, Player playerTwo,
                              TextField playerTwoNameField) {
+
+   // playerOne.setName(playerOneNameField.getValue());
+
+    if (!logInService.nameOfLoggedInUser.isEmpty()){
+      playerOne.setName(logInService.nameOfLoggedInUser);
+      System.out.println(playerOne.getName() + "rn");
+    } else playerOne.setName(playerOneNameField.getValue());
+
+    playerTwo.setName(playerTwoNameField.getValue());
+
     //if no input for a players name set it with Player One/Player Two
     if (playerOneNameField.getValue().isEmpty()) {
       playerOneNameField.setValue("Player One");
@@ -40,12 +45,13 @@ public class GameService {
     if (playerTwoNameField.getValue().isEmpty()) {
       playerTwoNameField.setValue("Player Two");
       playerTwo.setName("Player Two");
-    } else if (!playerOneNameField.getValue().isEmpty() &&
+    } /*else if (!playerOneNameField.getValue().isEmpty() &&
         !playerTwoNameField.getValue().isEmpty()) {
       //set Player names with input from textfields
       playerOne.setName(playerOneNameField.getValue());
       playerTwo.setName(playerTwoNameField.getValue());
     }
+    */
 
     playerService.bringNamesToSameLength(playerOne, playerTwo);
   }
@@ -61,7 +67,12 @@ public class GameService {
 
     getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
 
-    playerOneButton.setText(playerOneNameField.getValue());
+    //if user logged in, put his name on button
+    if (!logInService.getNameOfLoggedInUser().isEmpty()){
+      playerOneButton.setText(logInService.getNameOfLoggedInUser());
+    } else playerOneButton.setText(playerOneNameField.getValue());
+
+    //playerOneButton.setText(playerOneNameField.getValue());
     playerTwoButton.setText(playerTwoNameField.getValue());
 
     //initialize gamesStorage with 0 for both players
@@ -123,4 +134,12 @@ public class GameService {
     labelOfPlayerTwo.setText(playerTwo.getScoreOfPlayer());
   }
 
+  public void setNameFields(TextField playerOneNameField) {
+    String x = logInService.getNameOfLoggedInUser();
+    if (!x.isEmpty()) {
+      playerOneNameField.setValue(x);
+      playerOneNameField.setEnabled(false);
+      System.out.println(logInService.getNameOfLoggedInUser());
+    }
+  }
 }
