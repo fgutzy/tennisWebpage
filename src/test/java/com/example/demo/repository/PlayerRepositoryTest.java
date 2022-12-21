@@ -1,10 +1,7 @@
 package com.example.demo.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
 
-
-import com.example.demo.Player;
-import java.util.ArrayList;
+import com.example.demo.entity.Player;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

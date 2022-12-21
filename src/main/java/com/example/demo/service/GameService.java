@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 
-import com.example.demo.Player;
+import com.example.demo.entity.Player;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;

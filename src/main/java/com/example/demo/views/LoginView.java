@@ -1,6 +1,5 @@
 package com.example.demo.views;
 
-import com.example.demo.Game;
 import com.example.demo.service.LogInService;
 import com.example.demo.service.PlayerService;
 import com.vaadin.flow.component.UI;
@@ -69,7 +68,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
 
         new RouterLink("Register", RegisterView.class),
-        new RouterLink("Quickstart", Game.class)
+        new RouterLink("Quickstart", GameView.class)
     );
 
     setJustifyContentMode(JustifyContentMode.CENTER);

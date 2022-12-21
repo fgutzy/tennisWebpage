@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.Player;
+import com.example.demo.entity.Player;
 import com.example.demo.repository.PlayerRepository;
 import com.vaadin.flow.component.html.Paragraph;
 import java.sql.Connection;

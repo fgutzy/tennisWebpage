@@ -1,8 +1,7 @@
 package com.example.demo.views;
 
 
-import com.example.demo.Player;
-import com.example.demo.security.SecurityService;
+import com.example.demo.entity.Player;
 import com.example.demo.service.LogInService;
 import com.example.demo.service.PlayerService;
 import com.vaadin.flow.component.UI;
@@ -29,16 +28,12 @@ public class ScoreView extends VerticalLayout {
   private PlayerService playerService;
 
   @Autowired
-  SecurityService securityService;
-
-  @Autowired
   LogInService logInService;
 
 
 
-  public ScoreView(PlayerService playerService, SecurityService securityService) {
+  public ScoreView(PlayerService playerService) {
     this.playerService = playerService;
-    this.securityService = securityService;
     addClassName("Score-view");
     setSizeFull();
     configureGrid();

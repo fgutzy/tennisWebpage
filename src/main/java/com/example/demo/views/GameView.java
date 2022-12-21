@@ -1,5 +1,6 @@
-package com.example.demo;
+package com.example.demo.views;
 
+import com.example.demo.entity.Player;
 import com.example.demo.service.GameService;
 import com.example.demo.service.LogInService;
 import com.example.demo.service.PlayerService;
@@ -24,10 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 //@Component
 //@ComponentScan
 //@NoArgsConstructor
-public class Game extends VerticalLayout {
+public class GameView extends VerticalLayout {
 
-
-  boolean siteWasentered = false;
   boolean startClick = true;
 
   @Autowired
@@ -39,16 +38,25 @@ public class Game extends VerticalLayout {
   @Autowired
   LogInService logInService;
 
+
+  PlayerService playerService2;
+
+  LogInService logInService2;
+
+  GameService gameService2;
+
   //public void buildWebsite() {
 
- // }
+  // }
 
-    public Game() throws SQLException {
+  public GameView(LogInService logInService2, PlayerService playerService2, GameService gameService2) throws SQLException {
 
-    siteWasentered = true;
+    this.logInService2 = logInService2;
+    this.playerService2 = playerService2;
+    this.gameService2 = gameService2;
 
     Button loginLogoutButton = new Button();
-    if (!playerService.loggedInOrNot){
+    if (!playerService2.loggedInOrNot){
       loginLogoutButton.setText("Log In");
     }else loginLogoutButton.setText("Log Out");
 
@@ -59,13 +67,11 @@ public class Game extends VerticalLayout {
         e.printStackTrace();
       }
       UI.getCurrent().navigate("/login");
-      logInService.setNameOfLoggedInUser("");
-      logInService.setLoginSuccesfull(false);
-      playerService.setLoggedInOrNot(false);
+      logInService2.setNameOfLoggedInUser("");
+      logInService2.setLoginSuccesfull(false);
+      playerService2.setLoggedInOrNot(false);
 
     });
-
-
     HorizontalLayout header = new HorizontalLayout(loginLogoutButton);
     add(header);
 
@@ -79,7 +85,7 @@ public class Game extends VerticalLayout {
 
     var playerOneNameField = new TextField("Enter name of player one");
     //if logged in, take user name and set field disabled
-    gameService.setNameFields(playerOneNameField);
+    gameService2.setNameFields(playerOneNameField);
 
     var playerTwoNameField = new TextField("Enter name of Player two");
     playerOneNameField.setMaxLength(16);

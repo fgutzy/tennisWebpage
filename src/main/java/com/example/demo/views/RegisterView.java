@@ -1,6 +1,6 @@
 package com.example.demo.views;
 
-import com.example.demo.Player;
+import com.example.demo.entity.Player;
 import com.example.demo.repository.PlayerRepository;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
@@ -90,8 +90,8 @@ public class RegisterView extends Composite {
       //save Player to Repository
     Player registeredPlayer = new Player(username, password1);
     playerRepository.save(registeredPlayer);
-    Notification.show("You will be redirected in a second");
+    Notification.show("Account succesfully created\n"+"You will be redirected in a second");
     Thread.sleep(1500);
-    UI.getCurrent().navigate("/game");
+    UI.getCurrent().navigate("/login");
     }
 }
