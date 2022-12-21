@@ -16,24 +16,25 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-@Route("leaderboard")
+@Route("/leaderboard")
 //@PermitAll
 @PageTitle("Leaderboard")
 
-public class ScoreView extends VerticalLayout {
+public class LeaderboardView extends VerticalLayout {
 
   Grid<Player> grid = new Grid<>(Player.class);
   TextField filteredText = new TextField();
 
   private PlayerService playerService;
 
-  @Autowired
+  //@Autowired
   LogInService logInService;
 
 
 
-  public ScoreView(PlayerService playerService) {
+  public LeaderboardView(PlayerService playerService, LogInService logInService) {
     this.playerService = playerService;
+    this.logInService = logInService;
     addClassName("Score-view");
     setSizeFull();
     configureGrid();
@@ -41,9 +42,8 @@ public class ScoreView extends VerticalLayout {
 
 
 
-
     Button loginLogoutButton = new Button();
-    if (!playerService.loggedInOrNot){
+    if (!logInService.isPlayerOneLoggedIn()){
       loginLogoutButton.setText("Log In");
     }else loginLogoutButton.setText("Log Out");
 
@@ -54,10 +54,10 @@ public class ScoreView extends VerticalLayout {
         e.printStackTrace();
       }
       UI.getCurrent().navigate("/login");
-        logInService.setNameOfLoggedInUser("");
-        logInService.setLoginSuccesfull(false);
-        playerService.setLoggedInOrNot(false);
-
+        logInService.setNameOfLoggedInUserOne("");
+        logInService.setNameOfLoggedInUserTwo("");
+        logInService.setPlayerOneLoggedIn(false);
+        logInService.setPlayerTwoLoggedIn(false);
     });
 
 
@@ -78,7 +78,6 @@ public class ScoreView extends VerticalLayout {
 
 
   private void updateList() {
-
     //sets Items that either contain a filtered value or whole List
     grid.setItems(playerService.findAll(filteredText.getValue()));
   }

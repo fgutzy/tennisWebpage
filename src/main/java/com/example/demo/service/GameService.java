@@ -19,19 +19,14 @@ public class GameService {
   PlayerService playerService;
 
   @Autowired
-  SQLService sqlService;
-
-  @Autowired
   LogInService logInService;
 
 
   public void setPlayerNames(Player playerOne, TextField playerOneNameField, Player playerTwo,
                              TextField playerTwoNameField) {
 
-   // playerOne.setName(playerOneNameField.getValue());
-
-    if (!logInService.nameOfLoggedInUser.isEmpty()){
-      playerOne.setName(logInService.nameOfLoggedInUser);
+    if (!logInService.nameOfLoggedInUserOne.isEmpty()){
+      playerOne.setName(logInService.nameOfLoggedInUserOne);
       System.out.println(playerOne.getName() + "rn");
     } else playerOne.setName(playerOneNameField.getValue());
 
@@ -45,13 +40,7 @@ public class GameService {
     if (playerTwoNameField.getValue().isEmpty()) {
       playerTwoNameField.setValue("Player Two");
       playerTwo.setName("Player Two");
-    } /*else if (!playerOneNameField.getValue().isEmpty() &&
-        !playerTwoNameField.getValue().isEmpty()) {
-      //set Player names with input from textfields
-      playerOne.setName(playerOneNameField.getValue());
-      playerTwo.setName(playerTwoNameField.getValue());
     }
-    */
 
     playerService.bringNamesToSameLength(playerOne, playerTwo);
   }
@@ -68,8 +57,8 @@ public class GameService {
     getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
 
     //if user logged in, put his name on button
-    if (!logInService.getNameOfLoggedInUser().isEmpty()){
-      playerOneButton.setText(logInService.getNameOfLoggedInUser());
+    if (!logInService.getNameOfLoggedInUserOne().isEmpty()){
+      playerOneButton.setText(logInService.getNameOfLoggedInUserOne());
     } else playerOneButton.setText(playerOneNameField.getValue());
 
     //playerOneButton.setText(playerOneNameField.getValue());
@@ -109,10 +98,6 @@ public class GameService {
     //remove last object (bc 0 was added after game was over)
     playerService.removeLastGame(playerOne, playerTwo);
 
-    //update SQL Data
-    sqlService.updatePlayerColumn(playerOne.getId(), "games_won", +1,
-        playerTwo.getId(), "games_lost", +1);
-
     //buttons cant be pressed after game is over
     setPlayerButtonsFalse(playerOneButton, playerTwoButton, buttonChoosingSetsNeededToWin);
 
@@ -134,12 +119,18 @@ public class GameService {
     labelOfPlayerTwo.setText(playerTwo.getScoreOfPlayer());
   }
 
-  public void setNameFields(TextField playerOneNameField) {
-    String x = logInService.getNameOfLoggedInUser();
-    if (!x.isEmpty()) {
-      playerOneNameField.setValue(x);
+  public void setNameFields(TextField playerOneNameField, TextField playerTwoNameField) {
+
+    String nameOfLoggedInUserOne = logInService.getNameOfLoggedInUserOne();
+    String nameOfLoggedInUserTwo = logInService.getNameOfLoggedInUserTwo();
+
+    if (!nameOfLoggedInUserOne.isEmpty()) {
+      playerOneNameField.setValue(nameOfLoggedInUserOne);
       playerOneNameField.setEnabled(false);
-      System.out.println(logInService.getNameOfLoggedInUser());
+    }
+    if (!nameOfLoggedInUserTwo.isEmpty()){
+      playerTwoNameField.setValue(nameOfLoggedInUserTwo);
+      playerTwoNameField.setEnabled(false);
     }
   }
 }
