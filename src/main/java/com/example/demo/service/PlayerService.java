@@ -1,22 +1,31 @@
 package com.example.demo.service;
 
-import com.example.demo.Player;
+import com.example.demo.entity.Player;
 import com.example.demo.repository.PlayerRepository;
 import com.vaadin.flow.component.html.Paragraph;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+//import com.vaadin.flow.security.SecurityContext;
 
 @Service
 public class PlayerService {
 
-
   public int currentGame = 0;
-
 
   @Autowired
   private PlayerRepository playerRepository;
+
+  @Autowired
+  LogInService logInService;
+
 
   public PlayerService() throws SQLException {
   }
@@ -155,6 +164,7 @@ public class PlayerService {
   }
 
   public void bringNamesToSameLength(Player playerOne, Player playerTwo){
+    /*
     StringBuilder toChange;
 
     if (playerOne.getName().length() != playerTwo.getName().length()) {
@@ -170,7 +180,21 @@ public class PlayerService {
         playerTwo.setName(toChange.append("\u00a0".repeat(Math.max(0, lengthDifference))).toString());
       }
     }
+     */
+    int lengthDifference = Math.abs(playerOne.getName().length() - playerTwo.getName().length());
+
+    if (lengthDifference > 0) {
+      String spaces = "\u00a0".repeat(lengthDifference);
+
+      if (playerOne.getName().length() < playerTwo.getName().length()) {
+        playerOne.setName(playerOne.getName() + spaces);
+      } else {
+        playerTwo.setName(playerTwo.getName() + spaces);
+      }
+    }
   }
+
+
 
   public void removeLastGame(Player playerOne, Player playerTwo){
     playerOne.gamesStorage.remove(playerOne.gamesStorage.size() - 1);
@@ -201,15 +225,28 @@ public class PlayerService {
    * Method to count wins and loses of a player
    */
 
-  public void countWinOrLoss(Player winningPlayer, Player losingPlayer){
+  public void countWinOrLoss(String winningPlayer, String loosingPlayer) throws SQLException {
 
-    winningPlayer.setGamesPlayed(winningPlayer.getGamesPlayed()+1);
-    losingPlayer.setGamesPlayed(losingPlayer.getGamesPlayed()+1);
+      if (logInService.isPlayerOneLoggedIn()){
 
-    winningPlayer.setGamesWon(+1);
-    losingPlayer.setGamesLost(+1);
+      Connection conn = DriverManager
+          .getConnection("jdbc:mysql://localhost:3306/tennis_db", "root", "rootpassword");
+      String updateSql =
+          "UPDATE tbl_player SET games_played = games_played + 1, games_won = games_won + CASE WHEN name_of_player = ? THEN 1 ELSE 0 END, games_lost = games_lost +" +
+              "CASE WHEN name_of_player = ? THEN 1 ELSE 0 END WHERE name_of_player IN (?,?)";
+      try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+        updateStmt.setString(1, winningPlayer);
+        updateStmt.setString(2, loosingPlayer);
+        updateStmt.setString(3, winningPlayer);
+        updateStmt.setString(4, loosingPlayer);
+        updateStmt.executeUpdate();
+      } catch (SQLException e) {
+        System.out.println("Error while updating Data for winning Player");
+      }
+    }
   }
   }
+
 
 
 

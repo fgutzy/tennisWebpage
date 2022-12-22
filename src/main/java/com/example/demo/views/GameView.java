@@ -1,25 +1,28 @@
-package com.example.demo;
+package com.example.demo.views;
 
-import com.example.demo.repository.PlayerRepository;
+import com.example.demo.entity.Player;
 import com.example.demo.service.GameService;
+import com.example.demo.service.LogInService;
 import com.example.demo.service.PlayerService;
-import com.example.demo.service.SQLService;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.dialog.Dialog;
-import javax.sql.DataSource;
-import java.sql.*;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route("")
-public class Game extends VerticalLayout {
+
+@Route("/game")
+@PageTitle("Game")
+public class GameView extends VerticalLayout {
 
   boolean startClick = true;
 
@@ -30,13 +33,50 @@ public class Game extends VerticalLayout {
   GameService gameService;
 
   @Autowired
-  PlayerRepository playerRepository;
-
-  @Autowired
-  SQLService sqlService;
+  LogInService logInService;
 
 
-  public Game() throws SQLException {
+  PlayerService playerService2;
+
+  LogInService logInService2;
+
+  GameService gameService2;
+
+
+  public GameView(LogInService logInService2, PlayerService playerService2, GameService gameService2) throws SQLException {
+
+    this.logInService2 = logInService2;
+    this.playerService2 = playerService2;
+    this.gameService2 = gameService2;
+
+    Button loginLogoutButton = new Button();
+    if (!logInService2.isPlayerOneLoggedIn()){
+      loginLogoutButton.setText("Log In");
+    }else loginLogoutButton.setText("Log Out");
+
+    loginLogoutButton.addClickListener(event -> {
+      try {
+        Thread.sleep(1500);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      UI.getCurrent().navigate("/login");
+      logInService2.setNameOfLoggedInUserOne("");
+      logInService2.setNameOfLoggedInUserTwo("");
+      logInService2.setPlayerOneLoggedIn(false);
+      logInService2.setPlayerTwoLoggedIn(false);
+
+    });
+
+    Button goToLeaderboard = new Button("Leaderboard", e->
+        UI.getCurrent().navigate("/leaderboard")
+    );
+
+    VerticalLayout header1 = new VerticalLayout(goToLeaderboard);
+    VerticalLayout header = new VerticalLayout(loginLogoutButton);
+    HorizontalLayout a = new HorizontalLayout();
+    a.add(header, header1);
+    add(a);
 
 
     //create Message but dont initialize (will be done in the method that checks if tiebreak is happening)
@@ -46,8 +86,12 @@ public class Game extends VerticalLayout {
     Label scoreLabelPlayerOne = new Label();
     Label scoreLabelPlayerTwo = new Label();
 
-    var playerOneNameField = new TextField("Enter name of Player one");
+    //if logged in, take user name and set field disabled
+    var playerOneNameField = new TextField("Enter name of player one");
     var playerTwoNameField = new TextField("Enter name of Player two");
+
+    gameService2.setNameFields(playerOneNameField, playerTwoNameField);
+
     playerOneNameField.setMaxLength(16);
     playerOneNameField.setHelperText("Max 16 letters");
     playerTwoNameField.setMaxLength(16);
@@ -61,7 +105,7 @@ public class Game extends VerticalLayout {
 
 
     //create players but set name after start button was pressed (cant take value from name field without refresh)
-    Player playerOne = new Player();
+    Player playerOne = new Player("");
     Player playerTwo = new Player("");
 
 
@@ -74,33 +118,22 @@ public class Game extends VerticalLayout {
     buttonChoosingSetsNeededToWin.setValue(2);
     buttonChoosingSetsNeededToWin.setHasControls(true);
 
+
     // put fields and buttons in a variable
     var playerAndSetInputFields =
         new HorizontalLayout(playerOneNameField, playerTwoNameField, buttonChoosingSetsNeededToWin);
     var alignedStartButton = new HorizontalLayout(startOrEndButton); //button in new line
+
 
     //allign items accordingly
     playerAndSetInputFields.setDefaultVerticalComponentAlignment(Alignment.AUTO);
     alignedStartButton.setVerticalComponentAlignment(Alignment.CENTER);
 
 
-/*    String url = "jdbc:mysql://localhost:3306/tennis_db";
-    String username = "root";
-    String password = "rootpassword";
-
-    Connection conn = DriverManager.getConnection(url, username, password);
-
- */
-
-
-
-
-
     //startOrEndButton is clicked
     startOrEndButton.addClickListener(e -> {
 
       gameService.setPlayerNames(playerOne, playerOneNameField, playerTwo, playerTwoNameField);
-
 
       //after game is started change the buttons text, colour and display the score (0,0),
       // and create buttons with name of players
@@ -113,10 +146,6 @@ public class Game extends VerticalLayout {
                 playerTwoNameField,
                 playerTwoButton, startOrEndButton, scoreLabelPlayerOne, scoreLabelPlayerTwo);
 
-        playerRepository.save(playerOne);
-        playerRepository.save(playerTwo);
-
-        gameService.winnerList.add(playerOne);
 
         var displayScore = new VerticalLayout(scoreLabelPlayerOne, scoreLabelPlayerTwo);
         var playOngoing = new HorizontalLayout(playerOneButton, playerTwoButton);
@@ -131,8 +160,6 @@ public class Game extends VerticalLayout {
         gameService.setDialog(dialog);
         add(dialog);
       }
-
-
     });
 
     //when button of player is pressed, call scorePoint method and set score for both players
@@ -147,8 +174,12 @@ public class Game extends VerticalLayout {
         gameService.setValuesToEndGame(playerOne, playerOneButton, playerTwo, playerTwoButton,
             startOrEndButton, buttonChoosingSetsNeededToWin);
 
-        //testing Phase to store value of how many games played
-        playerService.countWinOrLoss(playerOne, playerTwo);
+        //updating wins, loses and games played in SQL
+        try {
+          playerService.countWinOrLoss(logInService.getNameOfLoggedInUserOne(), logInService.getNameOfLoggedInUserTwo());
+        } catch (SQLException throwables) {
+          throwables.printStackTrace();
+        }
 
         var playerWonMessage = new Paragraph(playerOne.getName() + " has won");
         add(playerWonMessage);
@@ -156,7 +187,6 @@ public class Game extends VerticalLayout {
 
       //set score for players after check if game wis won
       gameService.getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
-
 
     });
 
@@ -171,6 +201,12 @@ public class Game extends VerticalLayout {
         gameService.setValuesToEndGame(playerTwo, playerTwoButton, playerOne, playerTwoButton,
             startOrEndButton, buttonChoosingSetsNeededToWin);
 
+        //updating wins, loses and games played in SQL
+        try {
+          playerService.countWinOrLoss(logInService.getNameOfLoggedInUserTwo(), logInService.getNameOfLoggedInUserOne());
+        } catch (SQLException throwables) {
+          throwables.printStackTrace();
+        }
 
         //create Message that Player won
         var playerWonMessage = new Paragraph(playerTwo.getName() + " has won");
@@ -185,8 +221,9 @@ public class Game extends VerticalLayout {
     add(playerAndSetInputFields, alignedStartButton);
     setAlignItems(Alignment.CENTER);
   }
-
 }
+
+
 
 
 

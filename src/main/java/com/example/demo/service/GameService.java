@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 
-import com.example.demo.Player;
+import com.example.demo.entity.Player;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -9,10 +9,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
-import java.util.ArrayList;
-import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,16 +18,20 @@ public class GameService {
   @Autowired
   PlayerService playerService;
 
-  @Getter
-  @Setter
-  public List<Player> winnerList = new ArrayList<>();
-
   @Autowired
-  SQLService sqlService;
+  LogInService logInService;
 
 
   public void setPlayerNames(Player playerOne, TextField playerOneNameField, Player playerTwo,
                              TextField playerTwoNameField) {
+
+    if (!logInService.nameOfLoggedInUserOne.isEmpty()){
+      playerOne.setName(logInService.nameOfLoggedInUserOne);
+      System.out.println(playerOne.getName() + "rn");
+    } else playerOne.setName(playerOneNameField.getValue());
+
+    playerTwo.setName(playerTwoNameField.getValue());
+
     //if no input for a players name set it with Player One/Player Two
     if (playerOneNameField.getValue().isEmpty()) {
       playerOneNameField.setValue("Player One");
@@ -40,11 +40,6 @@ public class GameService {
     if (playerTwoNameField.getValue().isEmpty()) {
       playerTwoNameField.setValue("Player Two");
       playerTwo.setName("Player Two");
-    } else if (!playerOneNameField.getValue().isEmpty() &&
-        !playerTwoNameField.getValue().isEmpty()) {
-      //set Player names with input from textfields
-      playerOne.setName(playerOneNameField.getValue());
-      playerTwo.setName(playerTwoNameField.getValue());
     }
 
     playerService.bringNamesToSameLength(playerOne, playerTwo);
@@ -61,7 +56,12 @@ public class GameService {
 
     getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
 
-    playerOneButton.setText(playerOneNameField.getValue());
+    //if user logged in, put his name on button
+    if (!logInService.getNameOfLoggedInUserOne().isEmpty()){
+      playerOneButton.setText(logInService.getNameOfLoggedInUserOne());
+    } else playerOneButton.setText(playerOneNameField.getValue());
+
+    //playerOneButton.setText(playerOneNameField.getValue());
     playerTwoButton.setText(playerTwoNameField.getValue());
 
     //initialize gamesStorage with 0 for both players
@@ -98,10 +98,6 @@ public class GameService {
     //remove last object (bc 0 was added after game was over)
     playerService.removeLastGame(playerOne, playerTwo);
 
-    //update SQL Data
-    sqlService.updatePlayerColumn(playerOne.getId(), "games_won", +1,
-        playerTwo.getId(), "games_lost", +1);
-
     //buttons cant be pressed after game is over
     setPlayerButtonsFalse(playerOneButton, playerTwoButton, buttonChoosingSetsNeededToWin);
 
@@ -123,4 +119,18 @@ public class GameService {
     labelOfPlayerTwo.setText(playerTwo.getScoreOfPlayer());
   }
 
+  public void setNameFields(TextField playerOneNameField, TextField playerTwoNameField) {
+
+    String nameOfLoggedInUserOne = logInService.getNameOfLoggedInUserOne();
+    String nameOfLoggedInUserTwo = logInService.getNameOfLoggedInUserTwo();
+
+    if (!nameOfLoggedInUserOne.isEmpty()) {
+      playerOneNameField.setValue(nameOfLoggedInUserOne);
+      playerOneNameField.setEnabled(false);
+    }
+    if (!nameOfLoggedInUserTwo.isEmpty()){
+      playerTwoNameField.setValue(nameOfLoggedInUserTwo);
+      playerTwoNameField.setEnabled(false);
+    }
+  }
 }
