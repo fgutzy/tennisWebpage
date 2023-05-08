@@ -26,10 +26,12 @@ public class PlayerService {
   @Autowired
   LogInService logInService;
 
-
+/* testen ob benötigt
   public PlayerService() throws SQLException {
   }
 
+
+ */
 
   public void pointScored(Player playerOne, Player playerTwo, Paragraph tiebreakMessage){
 

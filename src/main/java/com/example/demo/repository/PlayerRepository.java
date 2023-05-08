@@ -10,7 +10,10 @@ import org.springframework.stereotype.Repository;
 public interface PlayerRepository extends JpaRepository<Player, Integer> {
 
   //returns a List of Players that contain a passed String value
-  public List<Player> findPlayerByNameContaining(String name);
+  List<Player> findPlayerByNameContaining(String name);
 
-  public Player findByName(String name);
+  Player findPlayerByName(String name);
+
+
+
 }

@@ -1,5 +1,6 @@
 package com.example.demo.views;
 
+import com.example.demo.entity.Match;
 import com.example.demo.entity.Player;
 import com.example.demo.service.GameService;
 import com.example.demo.service.LogInService;
@@ -174,6 +175,8 @@ public class GameView extends VerticalLayout {
         gameService.setValuesToEndGame(playerOne, playerOneButton, playerTwo, playerTwoButton,
             startOrEndButton, buttonChoosingSetsNeededToWin);
 
+        Match match = new Match("Player One won");
+
         //updating wins, loses and games played in SQL
         try {
           playerService.countWinOrLoss(logInService.getNameOfLoggedInUserOne(), logInService.getNameOfLoggedInUserTwo());
@@ -195,7 +198,7 @@ public class GameView extends VerticalLayout {
       playerService.pointScored(playerTwo, playerOne, tiebreakMessage);
 
       if (playerTwo.getSets() ==
-          buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
+          buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the match
 
         //deacitvates all fields and updates the according result in SQL
         gameService.setValuesToEndGame(playerTwo, playerTwoButton, playerOne, playerTwoButton,

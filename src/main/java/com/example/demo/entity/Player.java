@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import java.util.ArrayList;
+import java.util.Set;
 import javax.persistence.*;
 import lombok.*;
 
@@ -20,7 +21,6 @@ public class Player {
       strategy = GenerationType.SEQUENCE,
       generator = "player_sequence"
   )
-
   int id;
 
   @Getter
@@ -57,6 +57,12 @@ public class Player {
   @Getter
   @Setter
   int points = 0;
+
+  @OneToMany(mappedBy = "playerOne")
+  private Set<Match> playerOneMatches;
+
+  @OneToMany(mappedBy = "playerTwo")
+  private Set<Match> playerTwoMatches;
 
 
   public boolean hasAdvantage;
