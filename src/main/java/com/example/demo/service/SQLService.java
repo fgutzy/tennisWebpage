@@ -41,7 +41,7 @@ public class SQLService {
 
  */
 
-  public boolean checkLoginCredentials(String nameOfPlayerToCheck, String passWordToCheck) {
+  public boolean checkLoginCredentials(String nameOfPlayerToCheck, String passwordToCheck) {
 
     boolean check = false;
 
@@ -51,7 +51,7 @@ public class SQLService {
           .getConnection("jdbc:mysql://localhost:3306/tennis_db", "root", "rootpassword");
       PreparedStatement statement = conn.prepareStatement(sql);
       statement.setString(1, nameOfPlayerToCheck);
-      statement.setString(2, passWordToCheck);
+      statement.setString(2, passwordToCheck);
       ResultSet resultSet = statement.executeQuery();
       if (resultSet.next()){
         check = true;

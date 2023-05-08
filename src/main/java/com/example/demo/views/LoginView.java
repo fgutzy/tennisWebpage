@@ -27,8 +27,8 @@ public class LoginView extends VerticalLayout {
 
   public LoginView() {
 
-    var username = new TextField("Username");
-    var password = new PasswordField("Password");
+    TextField username = new TextField("Username");
+    PasswordField password = new PasswordField("Password");
 
     add(
         new H1("Log in to save your data, or click Quickstart"),

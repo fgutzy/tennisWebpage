@@ -164,23 +164,6 @@ public class PlayerService {
   }
 
   public void bringNamesToSameLength(Player playerOne, Player playerTwo){
-    /*
-    StringBuilder toChange;
-
-    if (playerOne.getName().length() != playerTwo.getName().length()) {
-
-      int lengthDifference =
-          Math.abs(playerOne.getName().length() - playerTwo.getName().length()) * 2 - 2;
-
-      if (playerOne.getName().length() < playerTwo.getName().length()) {
-        toChange = new StringBuilder(playerOne.getName());
-        playerOne.setName(toChange.append("\u00a0".repeat(Math.max(0, lengthDifference))).toString());
-      } else {
-        toChange = new StringBuilder(playerTwo.getName());
-        playerTwo.setName(toChange.append("\u00a0".repeat(Math.max(0, lengthDifference))).toString());
-      }
-    }
-     */
     int lengthDifference = Math.abs(playerOne.getName().length() - playerTwo.getName().length());
 
     if (lengthDifference > 0) {
@@ -226,6 +209,7 @@ public class PlayerService {
    */
 
   public void countWinOrLoss(String winningPlayer, String loosingPlayer) throws SQLException {
+
 
       if (logInService.isPlayerOneLoggedIn()){
 

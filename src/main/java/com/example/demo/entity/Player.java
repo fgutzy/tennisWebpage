@@ -20,6 +20,7 @@ public class Player {
       strategy = GenerationType.SEQUENCE,
       generator = "player_sequence"
   )
+
   int id;
 
   @Getter
