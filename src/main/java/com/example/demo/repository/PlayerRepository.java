@@ -14,6 +14,4 @@ public interface PlayerRepository extends JpaRepository<Player, Integer> {
 
   Player findPlayerByName(String name);
 
-
-
 }

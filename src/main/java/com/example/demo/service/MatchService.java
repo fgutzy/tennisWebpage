@@ -25,4 +25,8 @@ public class MatchService {
         }
         return matchHistoryRepository.findAllByPlayerOneOrPlayerTwo(player, player);
     }
+
+    public List<Match> findAll(){
+        return matchHistoryRepository.findAll();
+    }
 }

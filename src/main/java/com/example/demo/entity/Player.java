@@ -7,7 +7,7 @@ import lombok.*;
 
 
 @Entity
-@Data
+//@Data
 @Table(name = "tbl_player")
 @NoArgsConstructor
 public class Player {

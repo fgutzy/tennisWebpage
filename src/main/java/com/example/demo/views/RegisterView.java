@@ -1,6 +1,8 @@
 package com.example.demo.views;
 
+import com.example.demo.entity.Match;
 import com.example.demo.entity.Player;
+import com.example.demo.repository.MatchHistoryRepository;
 import com.example.demo.repository.PlayerRepository;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
@@ -22,6 +24,9 @@ public class RegisterView extends Composite {
 
   @Autowired
   PlayerRepository playerRepository;
+
+  @Autowired
+  MatchHistoryRepository matchHistoryRepository;
 
 
   @Override
@@ -90,6 +95,7 @@ public class RegisterView extends Composite {
       //save Player to Repository
     Player registeredPlayer = new Player(username, password1);
     playerRepository.save(registeredPlayer);
+
     Notification.show("Account succesfully created\n"+"You will be redirected in a second");
     Thread.sleep(1500);
     UI.getCurrent().navigate("/login");

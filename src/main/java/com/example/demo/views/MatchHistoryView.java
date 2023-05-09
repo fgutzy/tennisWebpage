@@ -3,6 +3,8 @@ package com.example.demo.views;
 
 import com.example.demo.entity.Match;
 import com.example.demo.entity.Player;
+import com.example.demo.repository.MatchHistoryRepository;
+import com.example.demo.repository.PlayerRepository;
 import com.example.demo.service.LogInService;
 import com.example.demo.service.MatchService;
 import com.example.demo.service.PlayerService;
@@ -16,6 +18,8 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 
 @Route("/matchhistory")
@@ -31,6 +35,7 @@ public class MatchHistoryView extends VerticalLayout {
 
 
 
+
     public MatchHistoryView(MatchService matchService, LogInService logInService) {
         this.matchService = matchService;
         this.logInService = logInService;
@@ -38,8 +43,6 @@ public class MatchHistoryView extends VerticalLayout {
         setSizeFull();
         configureGrid();
         configureFilter();
-
-
 
         Button loginLogoutButton = new Button();
         if (!logInService.isPlayerOneLoggedIn()){
@@ -77,7 +80,8 @@ public class MatchHistoryView extends VerticalLayout {
 
     private void updateList() {
         //sets Items that either contain a filtered value or whole List
-        grid.setItems(matchService.findAllMatchesByPlayerName(filteredText.getValue()));
+       // grid.setItems(matchService.findAllMatchesByPlayerName(filteredText.getValue()));
+        grid.setItems(matchService.findAll());
     }
 
 

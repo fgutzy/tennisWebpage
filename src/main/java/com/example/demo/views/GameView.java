@@ -2,6 +2,7 @@ package com.example.demo.views;
 
 import com.example.demo.entity.Match;
 import com.example.demo.entity.Player;
+import com.example.demo.repository.MatchHistoryRepository;
 import com.example.demo.service.GameService;
 import com.example.demo.service.LogInService;
 import com.example.demo.service.PlayerService;
@@ -43,12 +44,16 @@ public class GameView extends VerticalLayout {
 
   GameService gameService2;
 
+  @Autowired
+  MatchHistoryRepository matchHistoryRepository;
 
-  public GameView(LogInService logInService2, PlayerService playerService2, GameService gameService2) throws SQLException {
 
+
+  public GameView(LogInService logInService2, PlayerService playerService2, GameService gameService2, MatchHistoryRepository matchHistoryRepository) throws SQLException {
     this.logInService2 = logInService2;
     this.playerService2 = playerService2;
     this.gameService2 = gameService2;
+    this.matchHistoryRepository = matchHistoryRepository;
 
     Button loginLogoutButton = new Button();
     if (!logInService2.isPlayerOneLoggedIn()){
@@ -171,11 +176,13 @@ public class GameView extends VerticalLayout {
       if (playerOne.getSets() ==
           buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
 
+        //setting final sets is not correct and should only work if logged in
+        Match match = new Match(playerOne.getName(), playerTwo.getName(), playerOne.getSets() +" "+ playerTwo.getSets());
+        matchHistoryRepository.save(match);
+
         //deacitvates all fields and updates the according result in SQL
         gameService.setValuesToEndGame(playerOne, playerOneButton, playerTwo, playerTwoButton,
             startOrEndButton, buttonChoosingSetsNeededToWin);
-
-        Match match = new Match("Player One won");
 
         //updating wins, loses and games played in SQL
         try {
