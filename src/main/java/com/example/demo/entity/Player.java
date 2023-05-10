@@ -31,7 +31,8 @@ public class Player {
   @Setter
   @Column(name = "Name_of_Player")
   String name;
-
+  @Getter
+  @Setter
   public ArrayList<Integer> gamesStorage = new ArrayList<>();
 
   @Getter

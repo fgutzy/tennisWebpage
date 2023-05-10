@@ -89,6 +89,5 @@ public class MatchHistoryView extends VerticalLayout {
         grid.addClassName("score-grid");
         grid.setSizeFull();
         grid.setColumns("playerOne", "playerTwo", "finalScore");
-        //grid.addColumn(Match::getMatch).setHeader("gamesPlayed");
     }
 }

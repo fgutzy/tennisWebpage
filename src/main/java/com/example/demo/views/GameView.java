@@ -176,9 +176,12 @@ public class GameView extends VerticalLayout {
       if (playerOne.getSets() ==
           buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
 
-        //setting final sets is not correct and should only work if logged in
-        Match match = new Match(playerOne.getName(), playerTwo.getName(), playerOne.getSets() +" "+ playerTwo.getSets());
-        matchHistoryRepository.save(match);
+        //setting final sets is not correct and should only work if logged in //match can consits out of multiple sets
+        //Match is created after start game button. after every set, match adds gameScore
+        if (logInService2.isPlayerOneLoggedIn() && logInService2.isPlayerTwoLoggedIn()) {
+          Match match = new Match(playerOne.getName(), playerTwo.getName(), displayFinalScore(playerOne, playerTwo));
+          matchHistoryRepository.save(match);
+        }
 
         //deacitvates all fields and updates the according result in SQL
         gameService.setValuesToEndGame(playerOne, playerOneButton, playerTwo, playerTwoButton,
@@ -230,6 +233,15 @@ public class GameView extends VerticalLayout {
 
     add(playerAndSetInputFields, alignedStartButton);
     setAlignItems(Alignment.CENTER);
+  }
+
+  //-1 needed bc after every won set, gamesStorage + 0
+  String displayFinalScore(Player playerOne, Player playerTwo){
+    String message = "";
+    for (int i = 0; i < playerOne.gamesStorage.size()-1; i++){
+      message += playerOne.gamesStorage.get(i) + ":" + playerTwo.gamesStorage.get(i) + " ";
+    }
+    return message;
   }
 }
 
