@@ -24,21 +24,6 @@ public class Match {
     )
     private int id;
 
-    /*
-    @ManyToOne
-    @JoinColumn(name = "playerOne_username")
-    @Getter
-    @Setter
-    Player playerOne;
-
-    @ManyToOne
-    @JoinColumn(name = "playerTwo_username")
-    @Getter
-    @Setter
-    Player playerTwo;
-
-     */
-
     private Date matchDate;
 
     @Getter
@@ -62,17 +47,4 @@ public class Match {
         this.finalScore = finalScore;
     }
 
-    /*
-    public Match(Player playerOne, Player playerTwo, String finalScore) {
-        this.finalScore = finalScore;
-        this.playerOne = playerOne;
-        this.playerTwo = playerTwo;
-    }
-
-    public Match(Player playerOne, String finalScore) {
-        this.finalScore = finalScore;
-        this.playerOne = playerOne;
-    }
-
- */
 }

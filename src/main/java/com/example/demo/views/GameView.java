@@ -28,35 +28,33 @@ public class GameView extends VerticalLayout {
 
   boolean startClick = true;
 
-  @Autowired
+
   PlayerService playerService;
 
-  @Autowired
-  GameService gameService;
-
-  @Autowired
   LogInService logInService;
 
-
-  PlayerService playerService2;
-
-  LogInService logInService2;
-
-  GameService gameService2;
+  GameService gameService;
 
   @Autowired
   MatchHistoryRepository matchHistoryRepository;
 
 
+  Paragraph tiebreakMessage;
+  IntegerField buttonChoosingSetsNeededToWin;
+  Button playerOneButton;
+  Button playerTwoButton;
+  Button startOrEndButton;
+  Label scoreLabelPlayerOne;
+  Label scoreLabelPlayerTwo;
 
-  public GameView(LogInService logInService2, PlayerService playerService2, GameService gameService2, MatchHistoryRepository matchHistoryRepository) throws SQLException {
-    this.logInService2 = logInService2;
-    this.playerService2 = playerService2;
-    this.gameService2 = gameService2;
+  public GameView(LogInService logInService, PlayerService playerService, GameService gameService, MatchHistoryRepository matchHistoryRepository) {
+    this.logInService = logInService;
+    this.playerService = playerService;
+    this.gameService = gameService;
     this.matchHistoryRepository = matchHistoryRepository;
 
     Button loginLogoutButton = new Button();
-    if (!logInService2.isPlayerOneLoggedIn()){
+    if (!logInService.isPlayerOneLoggedIn()){
       loginLogoutButton.setText("Log In");
     }else loginLogoutButton.setText("Log Out");
 
@@ -67,10 +65,10 @@ public class GameView extends VerticalLayout {
         e.printStackTrace();
       }
       UI.getCurrent().navigate("/login");
-      logInService2.setNameOfLoggedInUserOne("");
-      logInService2.setNameOfLoggedInUserTwo("");
-      logInService2.setPlayerOneLoggedIn(false);
-      logInService2.setPlayerTwoLoggedIn(false);
+      logInService.setNameOfLoggedInUserOne("");
+      logInService.setNameOfLoggedInUserTwo("");
+      logInService.setPlayerOneLoggedIn(false);
+      logInService.setPlayerTwoLoggedIn(false);
 
     });
 
@@ -86,28 +84,29 @@ public class GameView extends VerticalLayout {
 
 
     //create Message but dont initialize (will be done in the method that checks if tiebreak is happening)
-    var tiebreakMessage = new Paragraph("");
+    tiebreakMessage = new Paragraph("");
+
 
     //create all needed Fields and Buttons
-    Label scoreLabelPlayerOne = new Label();
-    Label scoreLabelPlayerTwo = new Label();
+    scoreLabelPlayerOne = new Label();
+    scoreLabelPlayerTwo = new Label();
 
     //if logged in, take user name and set field disabled
     var playerOneNameField = new TextField("Enter name of player one");
     var playerTwoNameField = new TextField("Enter name of Player two");
 
-    gameService2.setNameFields(playerOneNameField, playerTwoNameField);
+    gameService.setNameFields(playerOneNameField, playerTwoNameField);
 
     playerOneNameField.setMaxLength(16);
     playerOneNameField.setHelperText("Max 16 letters");
     playerTwoNameField.setMaxLength(16);
     playerTwoNameField.setHelperText("Max 16 letters");
 
-    var startOrEndButton = new Button("Start Game"); // initialize button as Start
+    startOrEndButton = new Button("Start Game"); // initialize button as Start
     startOrEndButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
 
-    var playerOneButton = new Button(playerOneNameField.getValue());
-    var playerTwoButton = new Button(playerTwoNameField.getValue());
+    playerOneButton = new Button(playerOneNameField.getValue());
+    playerTwoButton = new Button(playerTwoNameField.getValue());
 
 
     //create players but set name after start button was pressed (cant take value from name field without refresh)
@@ -115,7 +114,7 @@ public class GameView extends VerticalLayout {
     Player playerTwo = new Player("");
 
 
-    IntegerField buttonChoosingSetsNeededToWin = new IntegerField();
+    buttonChoosingSetsNeededToWin = new IntegerField();
     buttonChoosingSetsNeededToWin.setLabel("Sets needed to win");
     buttonChoosingSetsNeededToWin.setHelperText("Can be changed in-game");
     buttonChoosingSetsNeededToWin.setWidth("180px");
@@ -146,7 +145,6 @@ public class GameView extends VerticalLayout {
       if (startClick) {
 
         //method for filling up length differences in names to be more esthetic
-
         gameService
             .setVariablesReadyForGame(playerOne, playerOneNameField, playerOneButton, playerTwo,
                 playerTwoNameField,
@@ -168,6 +166,8 @@ public class GameView extends VerticalLayout {
       }
     });
 
+  //  buttonLogic(playerOneButton, playerOne, playerTwo);
+
     //when button of player is pressed, call scorePoint method and set score for both players
     playerOneButton.addClickListener(o -> {
 
@@ -178,7 +178,7 @@ public class GameView extends VerticalLayout {
 
         //setting final sets is not correct and should only work if logged in //match can consits out of multiple sets
         //Match is created after start game button. after every set, match adds gameScore
-        if (logInService2.isPlayerOneLoggedIn() && logInService2.isPlayerTwoLoggedIn()) {
+        if (logInService.isPlayerOneLoggedIn() && logInService.isPlayerTwoLoggedIn()) {
           Match match = new Match(playerOne.getName(), playerTwo.getName(), displayFinalScore(playerOne, playerTwo));
           matchHistoryRepository.save(match);
         }
@@ -202,6 +202,8 @@ public class GameView extends VerticalLayout {
       gameService.getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
 
     });
+
+
 
     playerTwoButton.addClickListener(o -> {
 
@@ -231,6 +233,8 @@ public class GameView extends VerticalLayout {
       gameService.getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
     });
 
+
+
     add(playerAndSetInputFields, alignedStartButton);
     setAlignItems(Alignment.CENTER);
   }
@@ -242,6 +246,44 @@ public class GameView extends VerticalLayout {
       message += playerOne.gamesStorage.get(i) + ":" + playerTwo.gamesStorage.get(i) + " ";
     }
     return message;
+  }
+
+
+  void buttonLogic(Button playerButton, Player playerOne, Player playerTwo){
+    //when button of player is pressed, call scorePoint method and set score for both players
+    playerButton.addClickListener(o -> {
+
+      playerService.pointScored(playerOne, playerTwo, tiebreakMessage);
+
+      if (playerOne.getSets() ==
+              buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
+
+        //setting final sets is not correct and should only work if logged in //match can consits out of multiple sets
+        //Match is created after start game button. after every set, match adds gameScore
+        if (logInService.isPlayerOneLoggedIn() && logInService.isPlayerTwoLoggedIn()) {
+          Match match = new Match(playerOne.getName(), playerTwo.getName(), displayFinalScore(playerOne, playerTwo));
+          matchHistoryRepository.save(match);
+        }
+
+        //deacitvates all fields and updates the according result in SQL
+        gameService.setValuesToEndGame(playerOne, playerOneButton, playerTwo, playerTwoButton,
+                startOrEndButton, buttonChoosingSetsNeededToWin);
+
+        //updating wins, loses and games played in SQL
+        try {
+          playerService.countWinOrLoss(logInService.getNameOfLoggedInUserOne(), logInService.getNameOfLoggedInUserTwo());
+        } catch (SQLException throwables) {
+          throwables.printStackTrace();
+        }
+
+        var playerWonMessage = new Paragraph(playerOne.getName() + " has won");
+        add(playerWonMessage);
+      }
+
+      //set score for players after check if game wis won
+      gameService.getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
+
+    });
   }
 }
 
