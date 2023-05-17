@@ -210,25 +210,10 @@ public class PlayerService {
    * Method to count wins and loses of a player
    */
 
-  public void countWinOrLoss(String winningPlayer, String loosingPlayer) throws SQLException {
-
+  public void countWinOrLoss(String winningPlayer, String loosingPlayer) {
 
       if (logInService.isPlayerOneLoggedIn()){
-
-      Connection conn = DriverManager
-          .getConnection("jdbc:mysql://localhost:3306/tennis_db", "root", "rootpassword");
-      String updateSql =
-          "UPDATE tbl_player SET games_played = games_played + 1, games_won = games_won + CASE WHEN name_of_player = ? THEN 1 ELSE 0 END, games_lost = games_lost +" +
-              "CASE WHEN name_of_player = ? THEN 1 ELSE 0 END WHERE name_of_player IN (?,?)";
-      try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
-        updateStmt.setString(1, winningPlayer);
-        updateStmt.setString(2, loosingPlayer);
-        updateStmt.setString(3, winningPlayer);
-        updateStmt.setString(4, loosingPlayer);
-        updateStmt.executeUpdate();
-      } catch (SQLException e) {
-        System.out.println("Error while updating Data for winning Player");
-      }
+        playerRepository.countWinOrLoss(winningPlayer, loosingPlayer);
     }
   }
   }

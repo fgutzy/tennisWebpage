@@ -1,7 +1,7 @@
 package com.example.demo.views;
 
+import com.example.demo.repository.PlayerRepository;
 import com.example.demo.service.LogInService;
-import com.example.demo.service.SQLService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
@@ -12,21 +12,23 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 @Route("/login")
 @PageTitle("Login")
 public class LoginView extends VerticalLayout {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoginView.class);
+    private static final Logger logger = LogManager.getLogger(LoginView.class);
 
     @Autowired
   LogInService loginService;
 
-  @Autowired
-  SQLService sqlService;
+    @Autowired
+    PlayerRepository playerRepository;
 
 
   public LoginView() {
@@ -39,10 +41,8 @@ public class LoginView extends VerticalLayout {
         username,
         password,
         new Button("Login to play against non-user", event -> {
-
-          if(sqlService.checkLoginCredentials(username.getValue(), password.getValue())){
-              logger.info("entered username: "+username.getValue() + "entered password: " + password.getValue());
-            loginService.setNameOfLoggedInUserOne(username.getValue());
+            if(playerRepository.findPlayerByNameAndPassword(username.getValue(), password.getValue()) != null){
+              loginService.setNameOfLoggedInUserOne(username.getValue());
             loginService.setPlayerOneLoggedIn(true);
             UI.getCurrent().navigate("/game");
           } else {

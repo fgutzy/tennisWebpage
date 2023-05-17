@@ -1,7 +1,7 @@
 package com.example.demo.views;
 
+import com.example.demo.repository.PlayerRepository;
 import com.example.demo.service.LogInService;
-import com.example.demo.service.SQLService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
@@ -23,7 +23,7 @@ public class MultiplayerView extends VerticalLayout{
     LogInService loginService;
 
     @Autowired
-    SQLService sqlService;
+  PlayerRepository playerRepository;
 
 
     public MultiplayerView() {
@@ -80,7 +80,7 @@ public class MultiplayerView extends VerticalLayout{
     }
 
   private boolean checkCredentials(TextField username, PasswordField password) {
-    if (sqlService.checkLoginCredentials(username.getValue(), password.getValue())) {
+      if(playerRepository.findPlayerByNameAndPassword(username.getValue(), password.getValue()) != null){
       username.setEnabled(false);
       password.setEnabled(false);
       return true;

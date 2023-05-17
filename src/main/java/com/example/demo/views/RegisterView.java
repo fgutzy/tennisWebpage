@@ -67,39 +67,23 @@ public class RegisterView extends Composite {
         Notification.show("Invalid username");
         return;
       }
-
-    // Check if username already exists in database
-    try {
-      Connection conn = DriverManager
-          .getConnection("jdbc:mysql://localhost:3306/tennis_db", "root", "rootpassword");
-      String sql = "SELECT * FROM tbl_player WHERE name_of_player = ?";
-      PreparedStatement pstmt = conn.prepareStatement(sql);
-      pstmt.setString(1, username);
-      ResultSet rs = pstmt.executeQuery();
-      if (rs.next()) {
-        Notification.show("Username taken");
-        return;
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-      Notification.show("Error checking username availability");
+    // password must be equal and longer then 5 characters
+    if (!password1.equals(password2) || password1.length() < 5) {
+      Notification.show("Passwords don't match or are too short (min. 5 characters)");
       return;
     }
 
-
-
-      // password must be equal and longer then 5 characters
-      if (!password1.equals(password2) || password1.length() < 5) {
-        Notification.show("Passwords don't match or are too short (min. 5 characters)");
-        return;
-      }
-
+    // Check if username already exists in database
+    if (playerRepository.findPlayerByName(username) != null){
+      Notification.show("Username taken");
+    } else {
       //save Player to Repository
-    Player registeredPlayer = new Player(username, password1);
-    playerRepository.save(registeredPlayer);
+      Player registeredPlayer = new Player(username, password1);
+      playerRepository.save(registeredPlayer);
 
-    Notification.show("Account succesfully created\n"+"You will be redirected in a second");
-    Thread.sleep(1500);
-    UI.getCurrent().navigate("/login");
+      Notification.show("Account succesfully created\n"+"You will be redirected in a second");
+      Thread.sleep(1500);
+      UI.getCurrent().navigate("/login");
+    }
     }
 }
