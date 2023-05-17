@@ -86,6 +86,8 @@ public class RegisterView extends Composite {
       return;
     }
 
+
+
       // password must be equal and longer then 5 characters
       if (!password1.equals(password2) || password1.length() < 5) {
         Notification.show("Passwords don't match or are too short (min. 5 characters)");

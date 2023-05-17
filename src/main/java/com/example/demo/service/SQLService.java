@@ -17,7 +17,7 @@ public class SQLService {
 
   @Autowired
   LogInService logInService;
-/*
+
   public void countWinOrLoss(String winningPlayer, String loosingPlayer) throws SQLException {
 
     if (logInService.isPlayerOneLoggedIn()){
@@ -39,7 +39,7 @@ public class SQLService {
     }
   }
 
- */
+
 
   public boolean checkLoginCredentials(String nameOfPlayerToCheck, String passwordToCheck) {
 
@@ -59,6 +59,7 @@ public class SQLService {
     } catch (SQLException e) {
       System.out.println("Error executing query: " + e.getMessage());
     }
+
     return check;
   }
 }

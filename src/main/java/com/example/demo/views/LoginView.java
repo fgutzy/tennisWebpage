@@ -13,12 +13,16 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Route("/login")
 @PageTitle("Login")
 public class LoginView extends VerticalLayout {
 
-  @Autowired
+    private static final Logger logger = LoggerFactory.getLogger(LoginView.class);
+
+    @Autowired
   LogInService loginService;
 
   @Autowired
@@ -37,11 +41,13 @@ public class LoginView extends VerticalLayout {
         new Button("Login to play against non-user", event -> {
 
           if(sqlService.checkLoginCredentials(username.getValue(), password.getValue())){
+              logger.info("entered username: "+username.getValue() + "entered password: " + password.getValue());
             loginService.setNameOfLoggedInUserOne(username.getValue());
             loginService.setPlayerOneLoggedIn(true);
             UI.getCurrent().navigate("/game");
           } else {
-            Notification.show("Wrong credentials");
+              logger.info("entered username: "+username.getValue() + "entered password: " + password.getValue());
+              Notification.show("Wrong credentials");
           }
         }),
 
