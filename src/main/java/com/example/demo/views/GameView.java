@@ -18,7 +18,6 @@ import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -166,74 +165,16 @@ public class GameView extends VerticalLayout {
       }
     });
 
-  //  buttonLogic(playerOneButton, playerOne, playerTwo);
-
-    //when button of player is pressed, call scorePoint method and set score for both players
+    //buttonLogic(playerOneButton, playerOne, playerTwo);
     playerOneButton.addClickListener(o -> {
-
-      playerService.pointScored(playerOne, playerTwo, tiebreakMessage);
-
-      if (playerOne.getSets() ==
-          buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
-
-        //setting final sets is not correct and should only work if logged in //match can consits out of multiple sets
-        //Match is created after start game button. after every set, match adds gameScore
-        if (logInService.isPlayerOneLoggedIn() && logInService.isPlayerTwoLoggedIn()) {
-          Match match = new Match(playerOne.getName(), playerTwo.getName(), displayFinalScore(playerOne, playerTwo));
-          matchHistoryRepository.save(match);
-        }
-
-        //deacitvates all fields and updates the according result in SQL
-        gameService.setValuesToEndGame(playerOne, playerOneButton, playerTwo, playerTwoButton,
-            startOrEndButton, buttonChoosingSetsNeededToWin);
-
-        //updating wins, loses and games played in SQL
-        try {
-          playerService.countWinOrLoss(logInService.getNameOfLoggedInUserOne(), logInService.getNameOfLoggedInUserTwo());
-        } catch (SQLException throwables) {
-          throwables.printStackTrace();
-        }
-
-        var playerWonMessage = new Paragraph(playerOne.getName() + " has won");
-        add(playerWonMessage);
-      }
-
-      //set score for players after check if game wis won
-      gameService.getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
-
-    });
-
-
-
-    playerTwoButton.addClickListener(o -> {
-
-      playerService.pointScored(playerTwo, playerOne, tiebreakMessage);
-
-      if (playerTwo.getSets() ==
-          buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the match
-
-        //deacitvates all fields and updates the according result in SQL
-        gameService.setValuesToEndGame(playerTwo, playerTwoButton, playerOne, playerTwoButton,
-            startOrEndButton, buttonChoosingSetsNeededToWin);
-
-        //updating wins, loses and games played in SQL
-        try {
-          playerService.countWinOrLoss(logInService.getNameOfLoggedInUserTwo(), logInService.getNameOfLoggedInUserOne());
-        } catch (SQLException throwables) {
-          throwables.printStackTrace();
-        }
-
-        //create Message that Player won
-        var playerWonMessage = new Paragraph(playerTwo.getName() + " has won");
-        add(playerWonMessage);
-
-      }
-
-      //set score for players after check if game is won
+      buttonScoringLogic(playerOne, playerTwo);
       gameService.getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
     });
 
-
+    playerTwoButton.addClickListener(o ->{
+      buttonScoringLogic(playerTwo, playerOne);
+      gameService.getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
+    });
 
     add(playerAndSetInputFields, alignedStartButton);
     setAlignItems(Alignment.CENTER);
@@ -248,42 +189,29 @@ public class GameView extends VerticalLayout {
     return message;
   }
 
+  void buttonScoringLogic(Player scoringPlayer, Player otherPlayer){
+    playerService.pointScored(scoringPlayer, otherPlayer, tiebreakMessage);
 
-  void buttonLogic(Button playerButton, Player playerOne, Player playerTwo){
-    //when button of player is pressed, call scorePoint method and set score for both players
-    playerButton.addClickListener(o -> {
+    if (scoringPlayer.getSets() ==
+            buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
 
-      playerService.pointScored(playerOne, playerTwo, tiebreakMessage);
-
-      if (playerOne.getSets() ==
-              buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
-
-        //setting final sets is not correct and should only work if logged in //match can consits out of multiple sets
-        //Match is created after start game button. after every set, match adds gameScore
-        if (logInService.isPlayerOneLoggedIn() && logInService.isPlayerTwoLoggedIn()) {
-          Match match = new Match(playerOne.getName(), playerTwo.getName(), displayFinalScore(playerOne, playerTwo));
-          matchHistoryRepository.save(match);
-        }
-
-        //deacitvates all fields and updates the according result in SQL
-        gameService.setValuesToEndGame(playerOne, playerOneButton, playerTwo, playerTwoButton,
-                startOrEndButton, buttonChoosingSetsNeededToWin);
-
-        //updating wins, loses and games played in SQL
-        try {
-          playerService.countWinOrLoss(logInService.getNameOfLoggedInUserOne(), logInService.getNameOfLoggedInUserTwo());
-        } catch (SQLException throwables) {
-          throwables.printStackTrace();
-        }
-
-        var playerWonMessage = new Paragraph(playerOne.getName() + " has won");
-        add(playerWonMessage);
+      //setting final sets is not correct and should only work if logged in //match can consits out of multiple sets
+      //Match is created after start game button. after every set, match adds gameScore
+      if (logInService.isPlayerOneLoggedIn() && logInService.isPlayerTwoLoggedIn()) {
+        Match match = new Match(scoringPlayer.getName(), otherPlayer.getName(), displayFinalScore(scoringPlayer, otherPlayer));
+        matchHistoryRepository.save(match);
       }
 
-      //set score for players after check if game wis won
-      gameService.getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
+      //deacitvates all fields and updates the according result in SQL
+      gameService.setValuesToEndGame(scoringPlayer, playerOneButton, otherPlayer, playerTwoButton,
+              startOrEndButton, buttonChoosingSetsNeededToWin);
 
-    });
+      //updating wins, loses and games played in SQL
+      playerService.countWinAndLoss(logInService.getNameOfLoggedInUserOne(), logInService.getNameOfLoggedInUserTwo());
+
+      var playerWonMessage = new Paragraph(scoringPlayer.getName() + " has won");
+      add(playerWonMessage);
+    }
   }
 }
 

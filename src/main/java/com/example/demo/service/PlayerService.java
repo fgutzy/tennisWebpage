@@ -210,9 +210,8 @@ public class PlayerService {
    * Method to count wins and loses of a player
    */
 
-  public void countWinOrLoss(String winningPlayer, String loosingPlayer) {
-
-      if (logInService.isPlayerOneLoggedIn()){
+  public void countWinAndLoss(String winningPlayer, String loosingPlayer) {
+      if (logInService.isPlayerOneLoggedIn() && logInService.isPlayerTwoLoggedIn()){
         playerRepository.countWinOrLoss(winningPlayer, loosingPlayer);
     }
   }
