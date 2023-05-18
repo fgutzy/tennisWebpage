@@ -14,6 +14,7 @@ import java.util.Date;
 public class Match {
 
     @Id
+    /*
     @SequenceGenerator(name = "match_sequence",
             sequenceName = "match_sequence",
             allocationSize = 1
@@ -22,6 +23,10 @@ public class Match {
             strategy = GenerationType.SEQUENCE,
             generator = "match_sequence"
     )
+
+     */
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private int id;
 
     private Date matchDate;

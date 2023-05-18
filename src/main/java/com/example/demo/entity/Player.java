@@ -13,7 +13,7 @@ import lombok.*;
 public class Player {
 
   @Id
-  @SequenceGenerator(name = "player_sequence",
+ /* @SequenceGenerator(name = "player_sequence",
           sequenceName = "player_sequence",
           allocationSize = 1
   )
@@ -21,6 +21,8 @@ public class Player {
       strategy = GenerationType.SEQUENCE,
       generator = "player_sequence"
   )
+  */
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   int id;
 
   @Getter
