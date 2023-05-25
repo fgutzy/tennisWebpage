@@ -22,9 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 
-@Route("/")
-//@PermitAll
-@PageTitle("Leaderboard")
+@Route("/matchhistory")
+
+@PageTitle("Matchhistory")
 
 public class MatchHistoryView extends VerticalLayout {
 
@@ -34,12 +34,10 @@ public class MatchHistoryView extends VerticalLayout {
     LogInService logInService;
 
 
-
-
     public MatchHistoryView(MatchService matchService, LogInService logInService) {
         this.matchService = matchService;
         this.logInService = logInService;
-        addClassName("Score-view");
+        addClassName("matchhistory-view");
         setSizeFull();
         configureGrid();
         configureFilter();

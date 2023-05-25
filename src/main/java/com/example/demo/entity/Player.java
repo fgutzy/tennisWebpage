@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
 import java.util.ArrayList;
-import java.util.Set;
 import javax.persistence.*;
 import lombok.*;
 
@@ -13,15 +12,6 @@ import lombok.*;
 public class Player {
 
   @Id
- /* @SequenceGenerator(name = "player_sequence",
-          sequenceName = "player_sequence",
-          allocationSize = 1
-  )
-  @GeneratedValue(
-      strategy = GenerationType.SEQUENCE,
-      generator = "player_sequence"
-  )
-  */
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   int id;
 
@@ -69,12 +59,13 @@ public class Player {
   public Player(String name) {
     this.name = name;
   }
-
+/*
   public Player(int id, String name, String password){
     this.id = id;
     this.name = name;
     this.password = password;
   }
+ */
 
   public Player(String name, String password){
     this.name = name;
