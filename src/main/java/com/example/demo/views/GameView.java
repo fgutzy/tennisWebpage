@@ -202,7 +202,7 @@ public class GameView extends VerticalLayout {
       Match match = new Match(scoringPlayer.getName(), otherPlayer.getName(), displayFinalScore(scoringPlayer, otherPlayer));
         matchHistoryRepository.save(match);
 
-        //updating wins, loses and games played in SQL
+        //updating wins, loses and games played in SQL and for each Entitiy (for winning percentag)
       playerService.countWinAndLoss(scoringPlayer.getName(), otherPlayer.getName());
 
       //deacitvates all fields and updates the according result in SQL

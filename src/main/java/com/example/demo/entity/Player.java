@@ -29,6 +29,8 @@ public class Player {
 
   private int gamesPlayed = 0;
 
+  //private double winningPercentage = 0.0;
+
   @Transient
   private int sets = 0;
 

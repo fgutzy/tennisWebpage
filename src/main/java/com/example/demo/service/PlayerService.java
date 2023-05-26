@@ -192,12 +192,27 @@ public class PlayerService {
     }
   }
 
-
+  //misses to update th winning percentage
   public void countWinAndLoss(String winningPlayer, String loosingPlayer) {
+   // Player winner = playerRepository.findPlayerByName(winningPlayer);
+   // Player looser = playerRepository.findPlayerByName(loosingPlayer);
       if (logInService.isPlayerOneLoggedIn() && logInService.isPlayerTwoLoggedIn()){
         playerRepository.countWinOrLoss(winningPlayer, loosingPlayer);
-    }
+        /*
+        winner.setWinningPercentage((double) winner.getGamesWon() / winner.getGamesPlayed() * 100);
+        System.out.println("winner percantage " + winner.getWinningPercentage());
+        looser.setWinningPercentage((double) looser.getGamesWon() / looser.getGamesPlayed() * 100);
+        System.out.println("looser percantage " + looser.getWinningPercentage());
+         */
+      }
   }
+
+/*
+  public void calculateWinningPercentage(Player player) {
+    player.setWinningPercentage((double) player.getGamesWon() / player.getGamesPlayed() * 100);
+  }
+ */
+
   }
 
 

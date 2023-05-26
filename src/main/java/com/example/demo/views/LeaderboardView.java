@@ -83,9 +83,10 @@ public class LeaderboardView extends VerticalLayout {
     grid.addClassName("score-grid");
     grid.setSizeFull();
     grid.removeAllColumns();
-    grid.addColumn(Player::getName).setHeader("Name");
-    grid.addColumn(Player::getGamesWon).setHeader("Wins");
-    grid.addColumn(Player::getGamesLost).setHeader("Losses");
-    grid.addColumn(Player::getGamesPlayed).setHeader("Games Played");
+    grid.addColumn(Player::getName).setHeader("Name").setSortable(true);
+    grid.addColumn(Player::getGamesWon).setHeader("Wins").setSortable(true);
+    grid.addColumn(Player::getGamesLost).setHeader("Losses").setSortable(true);
+    grid.addColumn(Player::getGamesPlayed).setHeader("Games Played").setSortable(true);
+    //grid.addColumn(Player::getWinningPercentage).setHeader("Winning Percentage").setSortable(true);
   }
 }
