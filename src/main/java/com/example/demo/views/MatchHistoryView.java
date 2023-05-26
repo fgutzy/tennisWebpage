@@ -2,12 +2,8 @@ package com.example.demo.views;
 
 
 import com.example.demo.entity.Match;
-import com.example.demo.entity.Player;
-import com.example.demo.repository.MatchHistoryRepository;
-import com.example.demo.repository.PlayerRepository;
 import com.example.demo.service.LogInService;
 import com.example.demo.service.MatchService;
-import com.example.demo.service.PlayerService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -17,9 +13,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 
 @Route("/matchhistory")
@@ -86,6 +79,6 @@ public class MatchHistoryView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassName("score-grid");
         grid.setSizeFull();
-        grid.setColumns("playerOne", "playerTwo", "finalScore");
+        grid.setColumns("playerOne", "playerTwo", "finalScore", "matchDate");
     }
 }

@@ -1,12 +1,12 @@
 package com.example.demo.entity;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name ="matchhistory")
@@ -14,42 +14,30 @@ import java.util.Date;
 public class Match {
 
     @Id
-    /*
-    @SequenceGenerator(name = "match_sequence",
-            sequenceName = "match_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "match_sequence"
-    )
-
-     */
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private int id;
 
-    private Date matchDate;
+    @Getter
+    @Setter
+    private String matchDate;
 
     @Getter
     @Setter
     private String finalScore;
+
     @Getter
     @Setter
     private String playerOne;
+
     @Getter
     @Setter
     private String playerTwo;
+
 
     public Match(String playerOne, String playerTwo, String finalScore) {
         this.playerOne = playerOne;
         this.playerTwo = playerTwo;
         this.finalScore = finalScore;
+        this.matchDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yy"));
     }
-
-    public Match(String playerOne, String finalScore) {
-        this.playerOne = playerOne;
-        this.finalScore = finalScore;
-    }
-
 }

@@ -199,6 +199,7 @@ public class GameView extends VerticalLayout {
 
       Match match = new Match(scoringPlayer.getName(), otherPlayer.getName(), displayFinalScore(scoringPlayer, otherPlayer));
         matchHistoryRepository.save(match);
+      System.out.println("Datum " + match.getMatchDate());
 
         //updating wins, loses and games played in SQL
         playerService.countWinAndLoss(logInService.getNameOfLoggedInUserOne(), logInService.getNameOfLoggedInUserTwo());

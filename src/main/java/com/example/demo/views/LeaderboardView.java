@@ -82,8 +82,10 @@ public class LeaderboardView extends VerticalLayout {
   private void configureGrid() {
     grid.addClassName("score-grid");
     grid.setSizeFull();
-    grid.setColumns("name", "gamesWon", "gamesLost");
-    //grid.addColumn(Player::getName).setHeader("Name");
-    grid.addColumn(Player::getGamesPlayed).setHeader("Played Games");
+    grid.removeAllColumns();
+    grid.addColumn(Player::getName).setHeader("Name");
+    grid.addColumn(Player::getGamesWon).setHeader("Wins");
+    grid.addColumn(Player::getGamesLost).setHeader("Losses");
+    grid.addColumn(Player::getGamesPlayed).setHeader("Games Played");
   }
 }
