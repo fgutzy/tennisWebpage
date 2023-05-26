@@ -21,7 +21,8 @@ public class StartView extends VerticalLayout {
                 new RouterLink("Login", LoginView.class),
                 new RouterLink("Register Account", RegisterView.class),
                 new RouterLink("Quickstart", GameView.class),
-                new RouterLink("Leaderboard", LeaderboardView.class)
+                new RouterLink("Leaderboard", LeaderboardView.class),
+                new RouterLink("Matchhistory", MatchHistoryView.class)
         );
 
         setJustifyContentMode(JustifyContentMode.CENTER);
