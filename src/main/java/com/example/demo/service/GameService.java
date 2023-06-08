@@ -27,10 +27,12 @@ public class GameService {
 
     if (!logInService.nameOfLoggedInUserOne.isEmpty()){
       playerOne.setName(logInService.nameOfLoggedInUserOne);
-      System.out.println(playerOne.getName() + "rn");
     } else playerOne.setName(playerOneNameField.getValue());
 
-    playerTwo.setName(playerTwoNameField.getValue());
+    if (!logInService.nameOfLoggedInUserTwo.isEmpty()){
+      playerTwo.setName(logInService.nameOfLoggedInUserTwo);
+    } else playerTwo.setName(playerTwoNameField.getValue());
+
 
     //if no input for a players name set it with Player One/Player Two
     if (playerOneNameField.getValue().isEmpty()) {

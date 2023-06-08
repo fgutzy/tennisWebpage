@@ -46,6 +46,12 @@ public class GameView extends VerticalLayout {
   Label scoreLabelPlayerOne;
   Label scoreLabelPlayerTwo;
 
+  //create players but set name after start button was pressed (cant take value from name field without refresh)
+  Player playerOne = new Player("");
+  Player playerTwo = new Player("");
+
+
+
   public GameView(LogInService logInService, PlayerService playerService, GameService gameService, MatchHistoryRepository matchHistoryRepository) {
     this.logInService = logInService;
     this.playerService = playerService;
@@ -82,6 +88,8 @@ public class GameView extends VerticalLayout {
     add(a);
 
 
+
+
     //create Message but dont initialize (will be done in the method that checks if tiebreak is happening)
     tiebreakMessage = new Paragraph("");
 
@@ -106,11 +114,6 @@ public class GameView extends VerticalLayout {
 
     playerOneButton = new Button(playerOneNameField.getValue());
     playerTwoButton = new Button(playerTwoNameField.getValue());
-
-
-    //create players but set name after start button was pressed (cant take value from name field without refresh)
-    Player playerOne = new Player("");
-    Player playerTwo = new Player("");
 
 
     buttonChoosingSetsNeededToWin = new IntegerField();
@@ -181,6 +184,7 @@ public class GameView extends VerticalLayout {
   }
 
   //-1 needed bc after every won set, gamesStorage + 0
+
   String displayFinalScore(Player playerOne, Player playerTwo){
     String message = "";
     for (int i = 0; i < playerOne.gamesStorage.size()-1; i++){
@@ -195,19 +199,15 @@ public class GameView extends VerticalLayout {
     if (scoringPlayer.getSets() ==
             buttonChoosingSetsNeededToWin.getValue()) { //check if enough sets to win the game
 
-      //setting final sets is not correct and should only work if logged in //match can consits out of multiple sets
-      //Match is created after start game button. after every set, match adds gameScore
-      if (logInService.isPlayerOneLoggedIn() && logInService.isPlayerTwoLoggedIn()) {
-        Match match = new Match(scoringPlayer.getName(), otherPlayer.getName(), displayFinalScore(scoringPlayer, otherPlayer));
+      Match match = new Match(scoringPlayer.getName(), otherPlayer.getName(), displayFinalScore(scoringPlayer, otherPlayer));
         matchHistoryRepository.save(match);
-      }
+
+        //updating wins, loses and games played in SQL and for each Entitiy (for winning percentag)
+      playerService.countWinAndLoss(scoringPlayer.getName(), otherPlayer.getName());
 
       //deacitvates all fields and updates the according result in SQL
       gameService.setValuesToEndGame(scoringPlayer, playerOneButton, otherPlayer, playerTwoButton,
               startOrEndButton, buttonChoosingSetsNeededToWin);
-
-      //updating wins, loses and games played in SQL
-      playerService.countWinAndLoss(logInService.getNameOfLoggedInUserOne(), logInService.getNameOfLoggedInUserTwo());
 
       var playerWonMessage = new Paragraph(scoringPlayer.getName() + " has won");
       add(playerWonMessage);

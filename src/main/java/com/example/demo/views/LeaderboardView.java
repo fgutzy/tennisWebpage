@@ -13,11 +13,9 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Route("/leaderboard")
-//@PermitAll
 @PageTitle("Leaderboard")
 
 public class LeaderboardView extends VerticalLayout {
@@ -27,15 +25,13 @@ public class LeaderboardView extends VerticalLayout {
 
   private PlayerService playerService;
 
-  //@Autowired
   LogInService logInService;
-
 
 
   public LeaderboardView(PlayerService playerService, LogInService logInService) {
     this.playerService = playerService;
     this.logInService = logInService;
-    addClassName("Score-view");
+    addClassName("leaderboard-view");
     setSizeFull();
     configureGrid();
     configureFilter();
@@ -86,8 +82,11 @@ public class LeaderboardView extends VerticalLayout {
   private void configureGrid() {
     grid.addClassName("score-grid");
     grid.setSizeFull();
-    grid.setColumns("name", "gamesWon", "gamesLost");
-    grid.addColumn(Player::getGamesPlayed).setHeader("gamesPlayed");
+    grid.removeAllColumns();
+    grid.addColumn(Player::getName).setHeader("Name").setSortable(true);
+    grid.addColumn(Player::getGamesWon).setHeader("Wins").setSortable(true);
+    grid.addColumn(Player::getGamesLost).setHeader("Losses").setSortable(true);
+    grid.addColumn(Player::getGamesPlayed).setHeader("Games Played").setSortable(true);
+    //grid.addColumn(Player::getWinningPercentage).setHeader("Winning Percentage").setSortable(true);
   }
-
 }

@@ -3,17 +3,9 @@ package com.example.demo.service;
 import com.example.demo.entity.Player;
 import com.example.demo.repository.PlayerRepository;
 import com.vaadin.flow.component.html.Paragraph;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-//import com.vaadin.flow.security.SecurityContext;
 
 @Service
 public class PlayerService {
@@ -26,12 +18,6 @@ public class PlayerService {
   @Autowired
   LogInService logInService;
 
-/* testen ob benötigt
-  public PlayerService() throws SQLException {
-  }
-
-
- */
 
   public void pointScored(Player playerOne, Player playerTwo, Paragraph tiebreakMessage){
 
@@ -43,7 +29,7 @@ public class PlayerService {
   public void pointScoredInternal(Player scoringPlayer, Player playerGettingScoredAgainst) {
 
     //if player scored while having an Advantage
-    if (scoringPlayer.hasAdvantage) {
+    if (scoringPlayer.isHasAdvantage()) {
 
       //after scoring during Advantage Points are set to zero
       setPointsOfBothPlayersZero(scoringPlayer, playerGettingScoredAgainst);
@@ -85,7 +71,7 @@ public class PlayerService {
     //if scoring Player has 7 or more Points and a two Point gap to other Player he won the game
     if (scoringPlayer.getPoints() >= 7 && scoringPlayer.getPoints() > playerGettingScoredAgainst.getPoints() + 1) {
       setPointsOfBothPlayersZero(scoringPlayer, playerGettingScoredAgainst);
-      scoringPlayer.tiebreak = false;
+      scoringPlayer.setTiebreak(false);
     }
   }
 
@@ -105,7 +91,7 @@ public class PlayerService {
 
   private void scoringwhileHavingFourtyPoints(Player scoringPlayer, Player playerGettingScoredAgainst){
     if (playerGettingScoredAgainst.getPoints() != 40 ||
-        !playerGettingScoredAgainst.hasAdvantage) {
+        !playerGettingScoredAgainst.isHasAdvantage()) {
       setAdvantageTrue(scoringPlayer);
     } else {
       setAdvantageFalse(playerGettingScoredAgainst);
@@ -122,13 +108,13 @@ public class PlayerService {
 
 
   private void setAdvantageTrue(Player playerToSetAdvantageTrueFor){
-    playerToSetAdvantageTrueFor.hasAdvantage = true;
-    playerToSetAdvantageTrueFor.printADOrNot = " AD";
+    playerToSetAdvantageTrueFor.setHasAdvantage(true);
+    playerToSetAdvantageTrueFor.setPrintADOrNot("AD");
   }
 
   private void setAdvantageFalse(Player playerToSetAdvantageFalseFor){
-    playerToSetAdvantageFalseFor.hasAdvantage = false;
-    playerToSetAdvantageFalseFor.printADOrNot = " ";
+    playerToSetAdvantageFalseFor.setHasAdvantage(false);
+    playerToSetAdvantageFalseFor.setPrintADOrNot(" ");
   }
 
   private void checkIfEnoughGamesForSet(Player scoringPlayer, Player playerGettingScoredAgainst){
@@ -152,11 +138,11 @@ public class PlayerService {
   private void checkIfTiebreak(Player scoringPlayer, Player playerGettingScoredAgainst){
     if (scoringPlayer.gamesStorage.get(currentGame) == 6 &&
         playerGettingScoredAgainst.gamesStorage.get(currentGame) == 6) {
-      scoringPlayer.tiebreak = true;
-      playerGettingScoredAgainst.tiebreak = true;
+      scoringPlayer.setTiebreak(true);
+      playerGettingScoredAgainst.setTiebreak(true);
     } else {
-      scoringPlayer.tiebreak = false;
-      playerGettingScoredAgainst.tiebreak = false;
+      scoringPlayer.setTiebreak(false);
+      playerGettingScoredAgainst.setTiebreak(false);
     }
   }
 
@@ -187,7 +173,7 @@ public class PlayerService {
   }
 
   public void checkForTiebreak(Player player, Paragraph paragraph){
-    if (player.tiebreak){
+    if (player.isTiebreak()){
       paragraph.setText("Tiebreak!");
     }else {
       paragraph.setText("");
@@ -206,15 +192,27 @@ public class PlayerService {
     }
   }
 
-  /**
-   * Method to count wins and loses of a player
-   */
-
+  //misses to update th winning percentage
   public void countWinAndLoss(String winningPlayer, String loosingPlayer) {
+   // Player winner = playerRepository.findPlayerByName(winningPlayer);
+   // Player looser = playerRepository.findPlayerByName(loosingPlayer);
       if (logInService.isPlayerOneLoggedIn() && logInService.isPlayerTwoLoggedIn()){
         playerRepository.countWinOrLoss(winningPlayer, loosingPlayer);
-    }
+        /*
+        winner.setWinningPercentage((double) winner.getGamesWon() / winner.getGamesPlayed() * 100);
+        System.out.println("winner percantage " + winner.getWinningPercentage());
+        looser.setWinningPercentage((double) looser.getGamesWon() / looser.getGamesPlayed() * 100);
+        System.out.println("looser percantage " + looser.getWinningPercentage());
+         */
+      }
   }
+
+/*
+  public void calculateWinningPercentage(Player player) {
+    player.setWinningPercentage((double) player.getGamesWon() / player.getGamesPlayed() * 100);
+  }
+ */
+
   }
 
 
