@@ -1,13 +1,10 @@
 package com.example.demo.views;
 
-import com.example.demo.repository.PlayerRepository;
-import com.example.demo.service.LogInService;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Route("/")

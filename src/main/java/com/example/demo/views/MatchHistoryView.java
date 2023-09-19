@@ -2,7 +2,6 @@ package com.example.demo.views;
 
 
 import com.example.demo.entity.Match;
-import com.example.demo.service.LogInService;
 import com.example.demo.service.MatchService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -13,6 +12,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 
 
 @Route("/matchhistory")
@@ -24,19 +24,17 @@ public class MatchHistoryView extends VerticalLayout {
     Grid<Match> grid = new Grid<>(Match.class);
     TextField filteredText = new TextField();
     private MatchService matchService;
-    LogInService logInService;
 
-
-    public MatchHistoryView(MatchService matchService, LogInService logInService) {
+    public MatchHistoryView(MatchService matchService) {
         this.matchService = matchService;
-        this.logInService = logInService;
         addClassName("matchhistory-view");
         setSizeFull();
         configureGrid();
         configureFilter();
 
         Button loginLogoutButton = new Button();
-        if (!logInService.isPlayerOneLoggedIn()){
+        if (VaadinSession.getCurrent().getAttribute("playerOneLoggedIn") == null||
+                (boolean) VaadinSession.getCurrent().getAttribute("playerOneLoggedIn")){
             loginLogoutButton.setText("Log In");
         }else loginLogoutButton.setText("Log Out");
 
@@ -47,10 +45,8 @@ public class MatchHistoryView extends VerticalLayout {
                 e.printStackTrace();
             }
             UI.getCurrent().navigate("/login");
-            logInService.setNameOfLoggedInUserOne("");
-            logInService.setNameOfLoggedInUserTwo("");
-            logInService.setPlayerOneLoggedIn(false);
-            logInService.setPlayerTwoLoggedIn(false);
+            VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", false);
+            VaadinSession.getCurrent().setAttribute("playerTwoLoggedIn", false);
         });
 
 

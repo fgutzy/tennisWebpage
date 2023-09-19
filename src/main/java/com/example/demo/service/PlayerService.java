@@ -4,6 +4,8 @@ import com.example.demo.entity.Player;
 import com.example.demo.repository.PlayerRepository;
 import com.vaadin.flow.component.html.Paragraph;
 import java.util.List;
+
+import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +16,6 @@ public class PlayerService {
 
   @Autowired
   private PlayerRepository playerRepository;
-
-  @Autowired
-  LogInService logInService;
 
 
   public void pointScored(Player playerOne, Player playerTwo, Paragraph tiebreakMessage){
@@ -196,8 +195,10 @@ public class PlayerService {
   public void countWinAndLoss(String winningPlayer, String loosingPlayer) {
    // Player winner = playerRepository.findPlayerByName(winningPlayer);
    // Player looser = playerRepository.findPlayerByName(loosingPlayer);
-      if (logInService.isPlayerOneLoggedIn() && logInService.isPlayerTwoLoggedIn()){
-        playerRepository.countWinOrLoss(winningPlayer, loosingPlayer);
+    if((boolean) VaadinSession.getCurrent().getAttribute("playerOneLoggedIn")
+    && (boolean) VaadinSession.getCurrent().getAttribute("playerTwoLoggedIn"))
+      playerRepository.countWinOrLoss(winningPlayer, loosingPlayer);
+
         /*
         winner.setWinningPercentage((double) winner.getGamesWon() / winner.getGamesPlayed() * 100);
         System.out.println("winner percantage " + winner.getWinningPercentage());
@@ -213,7 +214,6 @@ public class PlayerService {
   }
  */
 
-  }
 
 
 

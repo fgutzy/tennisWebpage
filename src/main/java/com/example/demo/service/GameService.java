@@ -9,6 +9,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,19 +19,15 @@ public class GameService {
   @Autowired
   PlayerService playerService;
 
-  @Autowired
-  LogInService logInService;
-
-
   public void setPlayerNames(Player playerOne, TextField playerOneNameField, Player playerTwo,
                              TextField playerTwoNameField) {
 
-    if (!logInService.nameOfLoggedInUserOne.isEmpty()){
-      playerOne.setName(logInService.nameOfLoggedInUserOne);
+    if (VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne") != null){
+      playerOne.setName((String) VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne"));
     } else playerOne.setName(playerOneNameField.getValue());
 
-    if (!logInService.nameOfLoggedInUserTwo.isEmpty()){
-      playerTwo.setName(logInService.nameOfLoggedInUserTwo);
+    if (VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserTwo") != null){
+      playerTwo.setName((String) VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserTwo"));
     } else playerTwo.setName(playerTwoNameField.getValue());
 
 
@@ -59,11 +56,10 @@ public class GameService {
     getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
 
     //if user logged in, put his name on button
-    if (!logInService.getNameOfLoggedInUserOne().isEmpty()){
-      playerOneButton.setText(logInService.getNameOfLoggedInUserOne());
+    if (VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne") != null){
+      playerOneButton.setText((String) VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne"));
     } else playerOneButton.setText(playerOneNameField.getValue());
 
-    //playerOneButton.setText(playerOneNameField.getValue());
     playerTwoButton.setText(playerTwoNameField.getValue());
 
     //initialize gamesStorage with 0 for both players
@@ -123,14 +119,16 @@ public class GameService {
 
   public void setNameFields(TextField playerOneNameField, TextField playerTwoNameField) {
 
-    String nameOfLoggedInUserOne = logInService.getNameOfLoggedInUserOne();
-    String nameOfLoggedInUserTwo = logInService.getNameOfLoggedInUserTwo();
+    String nameOfLoggedInUserOne = (String) VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne");
+    String nameOfLoggedInUserTwo = (String) VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserTwo");
 
-    if (!nameOfLoggedInUserOne.isEmpty()) {
+
+    if (VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne") != null) {
       playerOneNameField.setValue(nameOfLoggedInUserOne);
       playerOneNameField.setEnabled(false);
     }
-    if (!nameOfLoggedInUserTwo.isEmpty()){
+
+    if (VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserTwo") != null){
       playerTwoNameField.setValue(nameOfLoggedInUserTwo);
       playerTwoNameField.setEnabled(false);
     }

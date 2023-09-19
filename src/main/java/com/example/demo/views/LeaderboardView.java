@@ -2,7 +2,6 @@ package com.example.demo.views;
 
 
 import com.example.demo.entity.Player;
-import com.example.demo.service.LogInService;
 import com.example.demo.service.PlayerService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -13,6 +12,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 
 
 @Route("/leaderboard")
@@ -25,12 +25,8 @@ public class LeaderboardView extends VerticalLayout {
 
   private PlayerService playerService;
 
-  LogInService logInService;
-
-
-  public LeaderboardView(PlayerService playerService, LogInService logInService) {
+  public LeaderboardView(PlayerService playerService) {
     this.playerService = playerService;
-    this.logInService = logInService;
     addClassName("leaderboard-view");
     setSizeFull();
     configureGrid();
@@ -39,9 +35,12 @@ public class LeaderboardView extends VerticalLayout {
 
 
     Button loginLogoutButton = new Button();
-    if (!logInService.isPlayerOneLoggedIn()){
+    if (VaadinSession.getCurrent().getAttribute("playerOneLoggedIn") == null||
+            (boolean) VaadinSession.getCurrent().getAttribute("playerOneLoggedIn")){
       loginLogoutButton.setText("Log In");
     }else loginLogoutButton.setText("Log Out");
+
+   // loginLogoutButton.setText((boolean) VaadinSession.getCurrent().getAttribute("playerOneLoggedIn") ? "Log In" : "Log out");
 
     loginLogoutButton.addClickListener(event -> {
       try {
@@ -50,10 +49,8 @@ public class LeaderboardView extends VerticalLayout {
         e.printStackTrace();
       }
       UI.getCurrent().navigate("/login");
-        logInService.setNameOfLoggedInUserOne("");
-        logInService.setNameOfLoggedInUserTwo("");
-        logInService.setPlayerOneLoggedIn(false);
-        logInService.setPlayerTwoLoggedIn(false);
+      VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", false);
+      VaadinSession.getCurrent().setAttribute("playerTwoLoggedIn", false);
     });
 
 

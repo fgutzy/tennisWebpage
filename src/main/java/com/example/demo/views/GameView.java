@@ -4,7 +4,6 @@ import com.example.demo.entity.Match;
 import com.example.demo.entity.Player;
 import com.example.demo.repository.MatchHistoryRepository;
 import com.example.demo.service.GameService;
-import com.example.demo.service.LogInService;
 import com.example.demo.service.PlayerService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -28,10 +27,7 @@ public class GameView extends VerticalLayout {
 
   boolean startClick = true;
 
-
   PlayerService playerService;
-
-  LogInService logInService;
 
   GameService gameService;
 
@@ -53,8 +49,7 @@ public class GameView extends VerticalLayout {
 
 
 
-  public GameView(LogInService logInService, PlayerService playerService, GameService gameService, MatchHistoryRepository matchHistoryRepository) {
-    this.logInService = logInService;
+  public GameView(PlayerService playerService, GameService gameService, MatchHistoryRepository matchHistoryRepository) {
     this.playerService = playerService;
     this.gameService = gameService;
     this.matchHistoryRepository = matchHistoryRepository;
@@ -62,7 +57,8 @@ public class GameView extends VerticalLayout {
     System.out.println(VaadinSession.getCurrent().getAttribute("username"));
 
     Button loginLogoutButton = new Button();
-    if (!logInService.isPlayerOneLoggedIn()){
+    if (VaadinSession.getCurrent().getAttribute("playerOneLoggedIn") == null||
+            !(boolean) VaadinSession.getCurrent().getAttribute("playerOneLoggedIn")){
       loginLogoutButton.setText("Log In");
     }else loginLogoutButton.setText("Log Out");
 
@@ -73,11 +69,8 @@ public class GameView extends VerticalLayout {
         e.printStackTrace();
       }
       UI.getCurrent().navigate("/login");
-      logInService.setNameOfLoggedInUserOne("");
-      logInService.setNameOfLoggedInUserTwo("");
-      logInService.setPlayerOneLoggedIn(false);
-      logInService.setPlayerTwoLoggedIn(false);
-
+      VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", false);
+      VaadinSession.getCurrent().setAttribute("playerTwoLoggedIn", false);
     });
 
     Button goToLeaderboard = new Button("Leaderboard", e->
@@ -89,8 +82,6 @@ public class GameView extends VerticalLayout {
     HorizontalLayout a = new HorizontalLayout();
     a.add(header, header1);
     add(a);
-
-
 
 
     //create Message but dont initialize (will be done in the method that checks if tiebreak is happening)
