@@ -1,4 +1,12 @@
 -------------------------------------------------------------------------------
 Test set: com.example.demo.repository.PlayerRepositoryTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.39 s - in com.example.demo.repository.PlayerRepositoryTest
+Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.62 s <<< FAILURE! - in com.example.demo.repository.PlayerRepositoryTest
+savePlayer  Time elapsed: 0.138 s  <<< ERROR!
+org.springframework.orm.jpa.JpaSystemException: could not execute statement; nested exception is org.hibernate.exception.GenericJDBCException: could not execute statement
+	at com.example.demo.repository.PlayerRepositoryTest.savePlayer(PlayerRepositoryTest.java:20)
+Caused by: org.hibernate.exception.GenericJDBCException: could not execute statement
+	at com.example.demo.repository.PlayerRepositoryTest.savePlayer(PlayerRepositoryTest.java:20)
+Caused by: java.sql.SQLException: Field 'player_one_logged_in' doesn't have a default value
+	at com.example.demo.repository.PlayerRepositoryTest.savePlayer(PlayerRepositoryTest.java:20)
+

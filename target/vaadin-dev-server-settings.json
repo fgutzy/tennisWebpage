@@ -1,13 +1,13 @@
 {
-  "frontendFolder": "C:/Users/Ferdi/IdeaProjects/tennisgame/frontend",
+  "frontendFolder": "C:/Users/Ferdi/IdeaProjects/digitalOcean/./frontend",
   "themeFolder": "themes",
-  "themeResourceFolder": "C:/Users/Ferdi/IdeaProjects/tennisgame/target/flow-frontend",
-  "staticOutput": "C:/Users/Ferdi/IdeaProjects/tennisgame/target/classes/META-INF/VAADIN/webapp/VAADIN/static",
+  "themeResourceFolder": "C:/Users/Ferdi/IdeaProjects/digitalOcean/target/flow-frontend",
+  "staticOutput": "C:/Users/Ferdi/IdeaProjects/digitalOcean/target/classes/META-INF/VAADIN/webapp/VAADIN/static",
   "generatedFolder": "generated",
-  "frontendBundleOutput": "C:\\Users\\Ferdi\\IdeaProjects\\tennisgame\\target\\classes\\META-INF\\VAADIN\\webapp",
+  "frontendBundleOutput": "C:\\Users\\Ferdi\\IdeaProjects\\digitalOcean\\target\\classes\\META-INF\\VAADIN\\webapp",
   "addonFrontendFolder": "target/flow-frontend/",
   "themeName": "",
-  "clientServiceWorkerSource": "C:\\Users\\Ferdi\\IdeaProjects\\tennisgame\\target\\sw.ts",
+  "clientServiceWorkerSource": "C:\\Users\\Ferdi\\IdeaProjects\\digitalOcean\\target\\sw.ts",
   "pwaEnabled": false,
   "offlineEnabled": false,
   "offlinePath": "'offline.html'"

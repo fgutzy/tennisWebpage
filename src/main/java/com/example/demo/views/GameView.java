@@ -18,6 +18,7 @@ import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -57,6 +58,8 @@ public class GameView extends VerticalLayout {
     this.playerService = playerService;
     this.gameService = gameService;
     this.matchHistoryRepository = matchHistoryRepository;
+
+    System.out.println(VaadinSession.getCurrent().getAttribute("username"));
 
     Button loginLogoutButton = new Button();
     if (!logInService.isPlayerOneLoggedIn()){
