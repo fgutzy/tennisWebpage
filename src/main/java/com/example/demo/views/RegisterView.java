@@ -4,6 +4,7 @@ import com.example.demo.entity.Match;
 import com.example.demo.entity.Player;
 import com.example.demo.repository.MatchHistoryRepository;
 import com.example.demo.repository.PlayerRepository;
+import com.example.demo.service.PlayerService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.UI;
@@ -17,6 +18,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import java.sql.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 
 
 @Route("register")
@@ -28,6 +31,7 @@ public class RegisterView extends Composite {
   @Autowired
   MatchHistoryRepository matchHistoryRepository;
 
+  
 
   @Override
   protected Component initContent() {
@@ -35,6 +39,7 @@ public class RegisterView extends Composite {
     TextField username = new TextField("Username");
     PasswordField password1 = new PasswordField("Password");
     PasswordField password2 = new PasswordField("Confirm Password");
+    TextField email = new TextField("Email");
 
 
     VerticalLayout layout = new VerticalLayout(
@@ -52,7 +57,15 @@ public class RegisterView extends Composite {
           } catch (InterruptedException e) {
             e.printStackTrace();
           }
-        })
+        }),
+              new Button("Email", event -> {
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo("ferdinand.gutzy@gmx.de");
+                message.setFrom("noreply@example.com");
+                message.setSubject("Registration");
+                message.setText("http://localhost:8080/activate?code" + );
+                mailSender.send(message);
+              })
     );
     layout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
     return layout;
