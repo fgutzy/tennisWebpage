@@ -40,18 +40,21 @@ public class RegisterView extends Composite {
     TextField username = new TextField("Username");
     PasswordField password1 = new PasswordField("Password");
     PasswordField password2 = new PasswordField("Confirm Password");
+    TextField email = new TextField("Email address");
 
     VerticalLayout layout = new VerticalLayout(
         new H2("Register"),
         username,
         password1,
         password2,
+        email,
         new Button("Done", event -> {
           try {
             register(
                 username.getValue(),
                 password1.getValue(),
-                password2.getValue()
+                password2.getValue(),
+                email.getValue()
             );
           } catch (InterruptedException e) {
             e.printStackTrace();
@@ -63,7 +66,7 @@ public class RegisterView extends Composite {
   }
 
 
-  private void register(String username, String password1, String password2)
+  private void register(String username, String password1, String password2, String email)
       throws InterruptedException {
 
      // Validate username
@@ -81,14 +84,13 @@ public class RegisterView extends Composite {
     if (playerRepository.findPlayerByName(username) != null){
       Notification.show("Username taken");
     } else {
-      //save Player to Repository
+
       Player registeredPlayer = new Player(username, password1);
-      //playerRepository.save(registeredPlayer);
+     // playerRepository.save(registeredPlayer);
 
       Notification.show("Account succesfully created\n"+"You will be redirected in a second");
       Thread.sleep(1500);
-      //playerService.sendMail();
-      emailService.sendMail();
+      emailService.sendMail(email);
       UI.getCurrent().navigate("/login");
     }
     }

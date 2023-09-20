@@ -20,17 +20,21 @@ public class EmailService {
 
     @Autowired
     JavaMailSender javaMailSender;
-    public void sendMail() {
+    public void sendMail(String destinationEmail) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(Constants.SENDING_EMAIL_ADRESS);
-        message.setTo("ferdinand.gutzy@gmx.de");
-        message.setSubject("Email Verification Link");
-        message.setText("Click this link to confirm your email address and complete setup for your account."
-                + "\n\nVerification Link: " + "http://localhost:8080/EmailVerification/ActivateAccount?key1=" +
-                "ferdinand.gutzy@gmx.de" + "&key2=" + "t1estS4ring");
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(Constants.SENDING_EMAIL_ADRESS);
+            message.setTo(destinationEmail);
+            message.setSubject("Email Verification Link");
+            message.setText("Click this link to confirm your email address and complete setup for your account."
+                    + "\n\nVerification Link: " + "http://localhost:8080/EmailVerification/ActivateAccount?key1=" +
+                    destinationEmail + "&key2=" + "t1estS4ring");
 
-        javaMailSender.send(message);
+            javaMailSender.send(message);
+        } catch (Exception e){
+            System.out.println("Error sending email at " + e);
+        }
     }
 
 }
