@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +19,11 @@ public class PlayerService {
   @Autowired
   private PlayerRepository playerRepository;
 
+  MailSender mailSender;
+
+  public PlayerService (MailSender mailSender){
+    this.mailSender = mailSender;
+  }
 
   public void pointScored(Player playerOne, Player playerTwo, Paragraph tiebreakMessage){
 

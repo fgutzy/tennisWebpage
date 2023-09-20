@@ -33,11 +33,11 @@ public class LeaderboardView extends VerticalLayout {
     configureFilter();
 
 
-
     Button loginLogoutButton = new Button();
 
-    loginLogoutButton.setText((boolean) VaadinSession.getCurrent().getAttribute("playerOneLoggedIn")
-            ? "Log In" : "Log out");
+    loginLogoutButton.setText(VaadinSession.getCurrent().getAttribute("playerOneLoggedIn") == null ||
+                    (boolean) VaadinSession.getCurrent().getAttribute("playerOneLoggedIn")
+                    ? "Log In" : "Log Out");
 
     loginLogoutButton.addClickListener(event -> {
       try {

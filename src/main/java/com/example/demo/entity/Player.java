@@ -3,6 +3,7 @@ package com.example.demo.entity;
 import java.util.ArrayList;
 import javax.persistence.*;
 import lombok.*;
+import org.apache.commons.lang3.RandomStringUtils;
 
 
 @Entity
@@ -49,6 +50,9 @@ public class Player {
   @Transient
   private String printADOrNot = "";
 
+  @Transient
+  private String activationCode;
+
   public Player(String name) {
     this.name = name;
   }
@@ -56,6 +60,7 @@ public class Player {
   public Player(String name, String password){
     this.name = name;
     this.password = password;
+    this.activationCode = RandomStringUtils.randomAlphanumeric(32);
   }
 
 

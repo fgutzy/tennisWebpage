@@ -12,6 +12,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Route("/login")
 @PageTitle("login")
@@ -20,7 +23,6 @@ public class LoginView extends VerticalLayout {
 
     @Autowired
     PlayerRepository playerRepository;
-
     public LoginView() {
 
         TextField username = new TextField("Username");
@@ -44,5 +46,6 @@ public class LoginView extends VerticalLayout {
         );
         setJustifyContentMode(JustifyContentMode.CENTER);
         setAlignItems(Alignment.CENTER);
+
     }
 }
