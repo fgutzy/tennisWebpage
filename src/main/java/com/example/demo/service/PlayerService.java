@@ -172,11 +172,7 @@ public class PlayerService {
   }
 
   public void checkForTiebreak(Player player, Paragraph paragraph){
-    if (player.isTiebreak()){
-      paragraph.setText("Tiebreak!");
-    }else {
-      paragraph.setText("");
-    }
+    paragraph.setText(player.isTiebreak() ? "Tiebreak" : "");
   }
 
   public List<Player> findAll(String filteredText) {

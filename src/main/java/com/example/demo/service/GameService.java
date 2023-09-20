@@ -22,13 +22,11 @@ public class GameService {
   public void setPlayerNames(Player playerOne, TextField playerOneNameField, Player playerTwo,
                              TextField playerTwoNameField) {
 
-    if (VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne") != null){
-      playerOne.setName((String) VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne"));
-    } else playerOne.setName(playerOneNameField.getValue());
+    playerOne.setName(VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne") != null ?
+            (String) VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne") : playerOneNameField.getValue());
 
-    if (VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserTwo") != null){
-      playerTwo.setName((String) VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserTwo"));
-    } else playerTwo.setName(playerTwoNameField.getValue());
+    playerTwo.setName(VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserTwo") != null ?
+            (String) VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserTwo") : playerTwoNameField.getValue());
 
 
     //if no input for a players name set it with Player One/Player Two
@@ -56,9 +54,8 @@ public class GameService {
     getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
 
     //if user logged in, put his name on button
-    if (VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne") != null){
-      playerOneButton.setText((String) VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne"));
-    } else playerOneButton.setText(playerOneNameField.getValue());
+    playerOneButton.setText(VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne") != null ?
+            (String) VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne") : playerOneNameField.getValue());
 
     playerTwoButton.setText(playerTwoNameField.getValue());
 

@@ -33,10 +33,9 @@ public class MatchHistoryView extends VerticalLayout {
         configureFilter();
 
         Button loginLogoutButton = new Button();
-        if (VaadinSession.getCurrent().getAttribute("playerOneLoggedIn") == null||
-                (boolean) VaadinSession.getCurrent().getAttribute("playerOneLoggedIn")){
-            loginLogoutButton.setText("Log In");
-        }else loginLogoutButton.setText("Log Out");
+
+        loginLogoutButton.setText(VaadinSession.getCurrent().getAttribute("playerOneLoggedIn") == null||
+                (boolean) VaadinSession.getCurrent().getAttribute("playerOneLoggedIn") ? "Log In" : "Log Out");
 
         loginLogoutButton.addClickListener(event -> {
             try {
