@@ -18,7 +18,6 @@ public class Player {
 
   private String password;
 
-  @Column(name = "Name_of_Player")
   private String name;
 
   @Transient
@@ -50,16 +49,20 @@ public class Player {
   @Transient
   private String printADOrNot = "";
 
-  @Transient
   private String activationCode;
+
+  private String email;
+
+  private boolean accountActivated;
 
   public Player(String name) {
     this.name = name;
   }
 
-  public Player(String name, String password){
+  public Player(String name, String password, String email){
     this.name = name;
     this.password = password;
+    this.email = email;
     this.activationCode = RandomStringUtils.randomAlphanumeric(32);
   }
 

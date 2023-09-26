@@ -13,6 +13,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Route("/matchhistory")
@@ -25,6 +26,7 @@ public class MatchHistoryView extends VerticalLayout {
     TextField filteredText = new TextField();
     private MatchService matchService;
 
+    @Autowired
     public MatchHistoryView(MatchService matchService) {
         this.matchService = matchService;
         addClassName("matchhistory-view");

@@ -21,18 +21,12 @@ public class PlayerService {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
-  @Override
-  public User registerNewUserAccount() {
+  public String hashPassword(String password) {
+    return passwordEncoder.encode(password);
+  }
 
-    User user = new User();
-    user.setFirstName(accountDto.getFirstName());
-    user.setLastName(accountDto.getLastName());
-
-    user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
-
-    user.setEmail(accountDto.getEmail());
-    user.setRole(new Role(Integer.valueOf(1), user));
-    return repository.save(user);
+  public boolean matchPassword(String password, String password2){
+    return passwordEncoder.matches(password, password2);
   }
 
 

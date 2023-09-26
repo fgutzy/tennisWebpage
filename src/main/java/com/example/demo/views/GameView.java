@@ -47,14 +47,10 @@ public class GameView extends VerticalLayout {
   Player playerOne = new Player("");
   Player playerTwo = new Player("");
 
-
-
   public GameView(PlayerService playerService, GameService gameService, MatchHistoryRepository matchHistoryRepository) {
     this.playerService = playerService;
     this.gameService = gameService;
     this.matchHistoryRepository = matchHistoryRepository;
-
-    System.out.println(VaadinSession.getCurrent().getAttribute("username"));
 
     Button loginLogoutButton = new Button();
 
@@ -177,13 +173,12 @@ public class GameView extends VerticalLayout {
   }
 
   //-1 needed bc after every won set, gamesStorage + 0
-
   String displayFinalScore(Player playerOne, Player playerTwo){
-    String message = "";
+    StringBuilder message = new StringBuilder();
     for (int i = 0; i < playerOne.gamesStorage.size()-1; i++){
-      message += playerOne.gamesStorage.get(i) + ":" + playerTwo.gamesStorage.get(i) + " ";
+      message.append(playerOne.gamesStorage.get(i)).append(":").append(playerTwo.gamesStorage.get(i)).append(" ");
     }
-    return message;
+    return message.toString();
   }
 
   void buttonScoringLogic(Player scoringPlayer, Player otherPlayer){

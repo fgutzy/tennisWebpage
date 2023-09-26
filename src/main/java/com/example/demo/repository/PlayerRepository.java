@@ -11,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Repository
-public interface PlayerRepository extends JpaRepository<Player, Integer> {
+public interface
+PlayerRepository extends JpaRepository<Player, Integer> {
 
   //returns a List of Players that contain a passed String value
   List<Player> findPlayerByNameContaining(String name);
@@ -19,6 +20,8 @@ public interface PlayerRepository extends JpaRepository<Player, Integer> {
   Player findPlayerByName(String name);
 
   Player findPlayerByNameAndPassword(String name, String password);
+
+  boolean findByActivationCode(String activationCode);
 
   @Modifying
   @Transactional

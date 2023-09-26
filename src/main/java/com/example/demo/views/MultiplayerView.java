@@ -22,7 +22,6 @@ public class MultiplayerView extends VerticalLayout {
     @Autowired
     PlayerRepository playerRepository;
 
-
     public MultiplayerView() {
 
         HorizontalLayout layout = new HorizontalLayout();

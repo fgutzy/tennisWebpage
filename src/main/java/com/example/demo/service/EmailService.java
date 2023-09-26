@@ -1,26 +1,22 @@
 package com.example.demo.service;
 
 import com.example.demo.Constants.Constants;
+import com.example.demo.entity.Player;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import java.util.Properties;
-
-import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.resource.spi.AuthenticationMechanism;
 @Service
+@Slf4j
 public class EmailService {
 
     @Autowired
     JavaMailSender javaMailSender;
-    public void sendMail(String destinationEmail) {
+
+    public void sendMail(String destinationEmail, Player player) {
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -28,13 +24,15 @@ public class EmailService {
             message.setTo(destinationEmail);
             message.setSubject("Email Verification Link");
             message.setText("Click this link to confirm your email address and complete setup for your account."
-                    + "\n\nVerification Link: " + "http://localhost:8080/EmailVerification/ActivateAccount?key1=" +
-                    destinationEmail + "&key2=" + "t1estS4ring");
-
+                    + "\n\nVerification Link: " + "http://localhost:8080/EmailVerification/ActivateAccount?" + player.getActivationCode());
             javaMailSender.send(message);
-        } catch (Exception e){
+            log.info("Verification email was send to " + player.getEmail());
+        } catch (Exception e) {
             System.out.println("Error sending email at " + e);
         }
     }
 
+    public boolean validEmail(String email) {
+        return EmailValidator.getInstance().isValid(email);
+    }
 }
