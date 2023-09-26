@@ -3,13 +3,12 @@ package com.example.demo.service;
 import com.example.demo.entity.Player;
 import com.example.demo.repository.PlayerRepository;
 import com.vaadin.flow.component.html.Paragraph;
-import java.util.List;
-
 import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class PlayerService {
@@ -19,20 +18,32 @@ public class PlayerService {
   @Autowired
   private PlayerRepository playerRepository;
 
-  MailSender mailSender;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
-  public PlayerService (MailSender mailSender){
-    this.mailSender = mailSender;
+  @Override
+  public User registerNewUserAccount() {
+
+    User user = new User();
+    user.setFirstName(accountDto.getFirstName());
+    user.setLastName(accountDto.getLastName());
+
+    user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
+
+    user.setEmail(accountDto.getEmail());
+    user.setRole(new Role(Integer.valueOf(1), user));
+    return repository.save(user);
   }
+
 
   public void pointScored(Player playerOne, Player playerTwo, Paragraph tiebreakMessage){
 
-    pointScoredInternal(playerOne, playerTwo);
+    pointScoringLogic(playerOne, playerTwo);
 
     checkForTiebreak(playerOne, tiebreakMessage);
   }
 
-  public void pointScoredInternal(Player scoringPlayer, Player playerGettingScoredAgainst) {
+  public void pointScoringLogic(Player scoringPlayer, Player playerGettingScoredAgainst) {
 
     //if player scored while having an Advantage
     if (scoringPlayer.isHasAdvantage()) {
@@ -196,26 +207,11 @@ public class PlayerService {
 
   //misses to update th winning percentage
   public void countWinAndLoss(String winningPlayer, String loosingPlayer) {
-   // Player winner = playerRepository.findPlayerByName(winningPlayer);
-   // Player looser = playerRepository.findPlayerByName(loosingPlayer);
     if((boolean) VaadinSession.getCurrent().getAttribute("playerOneLoggedIn")
     && (boolean) VaadinSession.getCurrent().getAttribute("playerTwoLoggedIn"))
       playerRepository.countWinOrLoss(winningPlayer, loosingPlayer);
-
-        /*
-        winner.setWinningPercentage((double) winner.getGamesWon() / winner.getGamesPlayed() * 100);
-        System.out.println("winner percantage " + winner.getWinningPercentage());
-        looser.setWinningPercentage((double) looser.getGamesWon() / looser.getGamesPlayed() * 100);
-        System.out.println("looser percantage " + looser.getWinningPercentage());
-         */
       }
   }
-
-/*
-  public void calculateWinningPercentage(Player player) {
-    player.setWinningPercentage((double) player.getGamesWon() / player.getGamesPlayed() * 100);
-  }
- */
 
 
 
