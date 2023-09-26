@@ -55,7 +55,7 @@ public class RegisterView extends Composite {
                                 email.getValue()
                         );
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
                 })
         );
@@ -64,8 +64,7 @@ public class RegisterView extends Composite {
     }
 
 
-    private void register(String username, String password1, String password2, String email)
-            throws InterruptedException {
+    private void register(String username, String password1, String password2, String email) throws InterruptedException {
 
         // Validate username
         if (username.isEmpty() || username.contains(" ") || username.equalsIgnoreCase("admin")) {
