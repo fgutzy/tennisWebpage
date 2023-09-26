@@ -19,8 +19,6 @@ PlayerRepository extends JpaRepository<Player, Integer> {
   Player findPlayerByName(String name);
 
   Player findPlayerByNameAndPassword(String name, String password);
-
-  boolean findByActivationCode(String activationCode);
   Player findPlayerByActivationCode(String code);
 
   @Modifying

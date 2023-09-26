@@ -20,6 +20,7 @@ public class ActivateAccountView extends VerticalLayout implements HasUrlParamet
     @Override
     public void setParameter(BeforeEvent event, @WildcardParameter String parameter) {
         Player player = playerRepository.findPlayerByActivationCode(parameter);
+        System.out.println(player.getActivationCode() + "hihi");
         if (player != null){
             playerRepository.setAccountActivatedTrueByName(player.getName());
             Notification.show("Account successfully verified");
