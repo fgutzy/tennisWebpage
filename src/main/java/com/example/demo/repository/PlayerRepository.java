@@ -27,6 +27,15 @@ PlayerRepository extends JpaRepository<Player, Integer> {
   @Transactional
   @Query("UPDATE Player p SET p.accountActivated = true WHERE p.name = :name")
   void setAccountActivatedTrueByName(String name);
+  @Modifying
+  @Transactional
+  @Query("UPDATE Player p SET p.activationCode = :activationCode WHERE p.name = :name")
+  void updateActivationCodeByName(String activationCode, String name);
+
+  @Modifying
+  @Transactional
+  @Query("UPDATE Player p SET p.email = :email WHERE p.name = :name")
+  void updateEmailByName(String email, String name);
 
   @Modifying
   @Transactional

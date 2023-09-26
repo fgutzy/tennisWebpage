@@ -82,16 +82,47 @@ public class RegisterView extends Composite {
             return;
         }
 
-        // Check if username already exists in database
-        if (playerRepository.findPlayerByName(username) != null) {
-            Notification.show("Username taken");
+
+        // Check if username already exists in database and respond accordingly
+/*
+        Player existingPlayer = playerRepository.findPlayerByName(username);
+        if (existingPlayer == null || !existingPlayer.isAccountActivated()) {
+            Player registeredPlayer = new Player(username, playerService.hashPassword(password1), email);
+            playerRepository.save(registeredPlayer);
+            if (!existingPlayer.isAccountActivated()) {
+                playerRepository.updateActivationCodeByName(username, registeredPlayer.getActivationCode());
+                System.out.println(registeredPlayer.getActivationCode() + "hihihuhu");
+                playerRepository.updateEmailByName(registeredPlayer.getEmail(), username);
+            }
+            log.info("User {} was saved", registeredPlayer.getName());
+            Notification.show("Please verify your registration mail");
+            emailService.sendMail(email, registeredPlayer);
+            Thread.sleep(1500);
         } else {
+            Notification.show("Username is taken");
+        }
+
+ */
+
+
+        if (playerRepository.findPlayerByName(username) == null) {
             Player registeredPlayer = new Player(username, playerService.hashPassword(password1) , email);
             playerRepository.save(registeredPlayer);
+            log.info("User {} was saved", registeredPlayer.getName());
+            Notification.show("Please verify your registration mail");
+            emailService.sendMail(email, registeredPlayer);
+            Thread.sleep(1500);
+            UI.getCurrent().navigate("/login");
+        } else if (!playerRepository.findPlayerByName(username).isAccountActivated()){
+            Player registeredPlayer = new Player(username, playerService.hashPassword(password1) , email);
+            playerRepository.updateActivationCodeByName(registeredPlayer.getActivationCode(), registeredPlayer.getName());
+            playerRepository.updateEmailByName(registeredPlayer.getEmail(), registeredPlayer.getName());
+            emailService.sendMail(email, registeredPlayer);
             Notification.show("Please verify your registration mail");
             Thread.sleep(1500);
-            emailService.sendMail(email, registeredPlayer);
             UI.getCurrent().navigate("/login");
+        } else {
+            Notification.show("Username is taken");
         }
     }
 }
