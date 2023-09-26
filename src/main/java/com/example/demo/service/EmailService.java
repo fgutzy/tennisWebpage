@@ -24,7 +24,7 @@ public class EmailService {
             message.setTo(destinationEmail);
             message.setSubject("Email Verification Link");
             message.setText("Click this link to confirm your email address and complete setup for your account."
-                    + "\n\nVerification Link: " + "http://localhost:8080/EmailVerification/ActivateAccount?" + player.getActivationCode());
+                    + "\n\nVerification Link: " + "http://localhost:8080/ActivateAccount/" + player.getActivationCode());
             javaMailSender.send(message);
             log.info("Verification email was send to " + player.getEmail());
         } catch (Exception e) {

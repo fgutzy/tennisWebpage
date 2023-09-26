@@ -88,7 +88,7 @@ public class RegisterView extends Composite {
         } else {
             Player registeredPlayer = new Player(username, playerService.hashPassword(password1) , email);
             playerRepository.save(registeredPlayer);
-            Notification.show("Account succesfully created\n" + "You will be redirected in a second");
+            Notification.show("Please verify your registration mail");
             Thread.sleep(1500);
             emailService.sendMail(email, registeredPlayer);
             UI.getCurrent().navigate("/login");

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +21,12 @@ PlayerRepository extends JpaRepository<Player, Integer> {
   Player findPlayerByNameAndPassword(String name, String password);
 
   boolean findByActivationCode(String activationCode);
+  Player findPlayerByActivationCode(String code);
+
+  @Modifying
+  @Transactional
+  @Query("UPDATE Player p SET p.accountActivated = true WHERE p.name = :name")
+  void setAccountActivatedTrueByName(String name);
 
   @Modifying
   @Transactional

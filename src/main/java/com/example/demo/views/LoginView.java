@@ -23,9 +23,10 @@ public class LoginView extends VerticalLayout {
     PlayerRepository playerRepository;
 
     PlayerService playerService;
+
     @Autowired
     public LoginView(PlayerService playerService) {
-        this.playerService= playerService;
+        this.playerService = playerService;
 
         TextField username = new TextField("Username");
         PasswordField password = new PasswordField("Password");
@@ -35,13 +36,14 @@ public class LoginView extends VerticalLayout {
                 password,
                 new Button("Login", event -> {
                     if (playerService.matchPassword(password.getValue(),
-                            playerRepository.findPlayerByName(username.getValue()).getPassword())) {
+                            playerRepository.findPlayerByName(username.getValue()).getPassword()) &&
+                            playerRepository.findPlayerByName(username.getValue()).isAccountActivated()) {
                         VaadinSession.getCurrent().setAttribute("username", username.getValue());
                         VaadinSession.getCurrent().setAttribute("nameOfLoggedInUserOne", username.getValue());
                         VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", true);
                         UI.getCurrent().navigate("/game");
                     } else {
-                        Notification.show("Wrong credentials");
+                        Notification.show("User doesnt exist, or wrong credentials");
                     }
                 }),
                 new RouterLink("Play against other user", MultiplayerView.class),
