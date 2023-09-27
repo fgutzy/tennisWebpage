@@ -93,11 +93,11 @@ public class RegisterView extends Composite {
             if (player == null) {
                 playerRepository.save(newPlayer);
                 log.info("User {} was saved", newPlayer.getName());
-            } else{
+            } else {
                 playerRepository.updateActivationCodeByName(newPlayer.getActivationCode(), newPlayer.getName());
                 playerRepository.updateEmailByName(newPlayer.getEmail(), newPlayer.getName());
             }
-        }else {
+        } else {
             Notification.show("Username is taken");
         }
     }

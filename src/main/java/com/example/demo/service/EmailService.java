@@ -17,7 +17,6 @@ public class EmailService {
     JavaMailSender javaMailSender;
 
     public void sendMail(String destinationEmail, Player player) {
-
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(Constants.SENDING_EMAIL_ADRESS);

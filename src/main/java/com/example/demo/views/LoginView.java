@@ -12,10 +12,12 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.VaadinSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("/login")
 @PageTitle("login")
+@Slf4j
 public class LoginView extends VerticalLayout {
 
 
@@ -41,9 +43,11 @@ public class LoginView extends VerticalLayout {
                         VaadinSession.getCurrent().setAttribute("username", username.getValue());
                         VaadinSession.getCurrent().setAttribute("nameOfLoggedInUserOne", username.getValue());
                         VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", true);
+                        log.info("User {} logged in", username);
                         UI.getCurrent().navigate("/game");
                     } else {
                         Notification.show("User doesnt exist, or wrong credentials");
+                        log.warn("User tried to log in with wrong credentials.");
                     }
                 }),
                 new RouterLink("Play against other user", MultiplayerView.class),
