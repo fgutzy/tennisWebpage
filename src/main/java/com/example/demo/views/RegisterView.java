@@ -85,7 +85,6 @@ public class RegisterView extends Composite {
         // Check if username already exists in database and respond accordingly
         Player player = playerRepository.findPlayerByName(username);
         if (player == null || !player.isAccountActivated()) {
-            Thread.sleep(1500);
             Notification.show("Please verify your registration mail");
             Player newPlayer = new Player(username, playerService.hashPassword(password1), email);
             emailService.sendActivationEmail(email, newPlayer);
