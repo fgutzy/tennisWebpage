@@ -24,7 +24,7 @@ public class EmailService {
     public void sendPasswordResetEmail(String destinationEmail, Player player){
         if (validEmail(destinationEmail)){
             sendMail(player.getEmail(), "Reset Password", "Click this link to reset your password."
-                    + "\n\nLink to reset password: " + "http://localhost:8080/verifyResetPassword" + player.getActivationCode());
+                    + "\n\nLink to reset password: " + "http://localhost:8080/verifyResetPassword/" + player.getActivationCode());
         }
     }
 
