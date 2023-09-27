@@ -16,16 +16,28 @@ public class EmailService {
     @Autowired
     JavaMailSender javaMailSender;
 
-    public void sendMail(String destinationEmail, Player player) {
+    public void sendActivationEmail(String destinationEmail, Player player) {
+        sendMail(destinationEmail, "Email Verification Link", "Click this link to confirm your email address and complete setup for your account."
+                + "\n\nVerification Link: " + "http://localhost:8080/ActivateAccount/" + player.getActivationCode());
+    }
+
+    public void sendPasswordResetEmail(String destinationEmail, Player player){
+        if (validEmail(destinationEmail)){
+            sendMail(player.getEmail(), "Reset Password", "Click this link to reset your password."
+                    + "\n\nLink to reset password: " + "http://localhost:8080/verifyResetPassword" + player.getActivationCode());
+        }
+    }
+
+
+    private void sendMail(String destinationEmail, String subject, String text) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(Constants.SENDING_EMAIL_ADRESS);
             message.setTo(destinationEmail);
-            message.setSubject("Email Verification Link");
-            message.setText("Click this link to confirm your email address and complete setup for your account."
-                    + "\n\nVerification Link: " + "http://localhost:8080/ActivateAccount/" + player.getActivationCode());
+            message.setSubject(subject);
+            message.setText(text);
             javaMailSender.send(message);
-            log.info("Verification email was send to " + player.getEmail());
+            log.info("Verification email was send to " + destinationEmail);
         } catch (Exception e) {
             System.out.println("Error sending email at " + e);
         }

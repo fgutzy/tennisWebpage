@@ -50,6 +50,7 @@ public class LoginView extends VerticalLayout {
                         log.warn("User tried to log in with wrong credentials.");
                     }
                 }),
+                new RouterLink("Reset password", ForgotPasswordView.class),
                 new RouterLink("Play against other user", MultiplayerView.class),
                 new RouterLink("Register Account", RegisterView.class)
         );

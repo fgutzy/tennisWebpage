@@ -1,2 +1,7 @@
-package com.example.demo.views;public class VerifyResetPasswordView {
+package com.example.demo.views;
+
+import com.vaadin.flow.router.Route;
+
+@Route("/verifyResetPassword")
+public class VerifyResetPasswordView {
 }

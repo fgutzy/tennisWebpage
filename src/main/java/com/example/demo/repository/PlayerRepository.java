@@ -13,13 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 public interface
 PlayerRepository extends JpaRepository<Player, Integer> {
 
-  //returns a List of Players that contain a passed String value
   List<Player> findPlayerByNameContaining(String name);
-
   Player findPlayerByName(String name);
-
   Player findPlayerByNameAndPassword(String name, String password);
   Player findPlayerByActivationCode(String code);
+  Player findPlayerByEmail(String email);
+
 
   @Modifying
   @Transactional
@@ -42,5 +41,6 @@ PlayerRepository extends JpaRepository<Player, Integer> {
           "games_lost = games_lost + CASE WHEN name_of_player = ?2 THEN 1 ELSE 0 END " +
           "WHERE name_of_player IN (?1, ?2)", nativeQuery = true)
   void countWinOrLoss(String winningPlayer, String losingPlayer);
+
 
 }

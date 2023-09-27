@@ -6,7 +6,6 @@ import com.example.demo.service.EmailService;
 import com.example.demo.service.PlayerService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
@@ -89,7 +88,7 @@ public class RegisterView extends Composite {
             Thread.sleep(1500);
             Notification.show("Please verify your registration mail");
             Player newPlayer = new Player(username, playerService.hashPassword(password1), email);
-            emailService.sendMail(email, newPlayer);
+            emailService.sendActivationEmail(email, newPlayer);
             if (player == null) {
                 playerRepository.save(newPlayer);
                 log.info("User {} was saved", newPlayer.getName());
