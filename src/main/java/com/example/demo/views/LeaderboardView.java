@@ -18,6 +18,9 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.WebApplicationContext;
+
+import static org.springframework.security.core.context.SecurityContextHolder.getContext;
 
 
 @Route("/leaderboard")
@@ -45,14 +48,13 @@ public class LeaderboardView extends VerticalLayout {
                     ? "Log In" : "Log Out");
 
     loginLogoutButton.addClickListener(event -> {
-      try {
-        Thread.sleep(1500);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-      UI.getCurrent().navigate("/login");
-      VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", false);
-      VaadinSession.getCurrent().setAttribute("playerTwoLoggedIn", false);
+        if(loginLogoutButton.getText().equals("Log In")){
+          UI.getCurrent().navigate("/login");
+        }else {
+          VaadinSession.getCurrent().getSession().invalidate();
+        }
+        VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", false);
+        VaadinSession.getCurrent().setAttribute("playerTwoLoggedIn", false);
     });
 
 
