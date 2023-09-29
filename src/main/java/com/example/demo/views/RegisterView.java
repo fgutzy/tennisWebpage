@@ -11,6 +11,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
@@ -64,58 +65,59 @@ public class RegisterView extends VerticalLayout {
                 })
         );
         setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-        setAlignItems(FlexComponent.Alignment.CENTER);    }
+        setAlignItems(FlexComponent.Alignment.CENTER);
+    }
 
 
     private void register(TextField username, PasswordField password1, PasswordField password2, TextField email) throws InterruptedException {
-        String usernameEntered = username.getValue();
-        String password1Entered = password1.getValue();
-        String password2Entered = password2.getValue();
-        String emailEntered = email.getValue();
-
-        System.out.println(usernameEntered + " username");
-        System.out.println(password1Entered + " password1");
-        System.out.println(password2Entered+ " password2");
-        System.out.println(emailEntered + " email");
-
-
 
         // Validate username
-        if (usernameEntered.isEmpty() || usernameEntered.contains(" ") || usernameEntered.equalsIgnoreCase("admin")) {
+        if (username.getValue().isEmpty() || username.getValue().contains(" ") || username.getValue().equalsIgnoreCase("admin")) {
             Notification.show("Invalid username");
             return;
         }
 
-        if (!password1Entered.equals(password2Entered) || password1Entered.length() < 5) {
+        if (!password1.getValue().equals(password2.getValue()) || password1.getValue().length() < 5) {
             Notification.show("Passwords don't match or are too short (min. 5 characters)");
             return;
         }
 
-        if (!emailService.validEmail(emailEntered)) {
+        if (!emailService.validEmail(email.getValue())) {
             Notification.show("Please enter valid email");
             return;
         }
 
+        //check if Player is allowed to register and act accordingly
+        Player existingPlayerByEmail = playerRepository.findPlayerByEmail(email.getValue());
 
-        // Check if username already exists in database and respond accordingly
-        Player player = playerRepository.findPlayerByName(usernameEntered);
-        if (player == null || !player.isAccountActivated() && playerRepository.findPlayerByEmail(emailEntered) == null) {
-            Notification.show("Please verify your registration mail");
-            username.clear();
-            password1.clear();
-            password2.clear();
-            email.clear();
-            Player newPlayer = new Player(usernameEntered, playerService.hashPassword(password1Entered), emailEntered);
-            emailService.sendActivationEmail(emailEntered, newPlayer);
-            if (player == null) {
-                playerRepository.save(newPlayer);
-                log.info("User {} was saved", newPlayer.getName());
-            } else {
-                playerRepository.updateActivationCodeByName(newPlayer.getActivationCode(), newPlayer.getName());
-                playerRepository.updateEmailByName(newPlayer.getEmail(), newPlayer.getName());
-            }
+        if (existingPlayerByEmail != null) {
+            Notification.show("You already created an account with this email");
         } else {
-            Notification.show("Username or email is taken");
+            Player existingPlayerByUsername = playerRepository.findPlayerByName(username.getValue());
+            if (existingPlayerByUsername == null) { // Both email and username are available, create a new player
+                Player newPlayer = new Player(username.getValue(), playerService.hashPassword(password1.getValue()), email.getValue());
+                playerRepository.save(newPlayer);
+                notifyAndClearFields(email.getValue(), newPlayer, username, password1, password2, email);
+            } else if (!existingPlayerByUsername.isAccountActivated()) { // Username is taken, but the account is not activated, update activation code and email
+                Player updatedPlayer = new Player(username.getValue(), password1.getValue(), email.getValue());
+                playerRepository.updateActivationCodeByName(updatedPlayer.getActivationCode(), updatedPlayer.getName());
+                playerRepository.updateEmailByName(email.getValue(), updatedPlayer.getName());
+                notifyAndClearFields(email.getValue(), updatedPlayer, username, password1, password2, email);
+            } else {// Username is taken and the account is activated
+                Notification.show("Username taken");
+            }
         }
     }
+
+
+    private void notifyAndClearFields(String destinationEmail, Player registeredPlayer, TextField username, PasswordField password1,PasswordField password2, TextField email ){
+        emailService.sendActivationEmail(destinationEmail, registeredPlayer);
+        log.info("User {} was saved", registeredPlayer.getName());
+        Notification.show("Please verify your registration email");
+        username.clear();
+        password1.clear();
+        password2.clear();
+        email.clear();
+    }
 }
+
