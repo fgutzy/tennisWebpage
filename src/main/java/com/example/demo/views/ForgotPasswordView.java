@@ -35,7 +35,6 @@ public class ForgotPasswordView extends VerticalLayout {
                 new Button("Send", event -> {
                     Notification.show("Check your mails");
                     //only send mail if player was found
-                    System.out.println(playerRepository.findPlayerByEmail("ferdinand.gutzy@gmx.de").getName() + "hihi");
                     Player player = playerRepository.findPlayerByEmail(email.getValue());
                     if (player != null) {
                         emailService.sendPasswordResetEmail(email.getValue(), player);
