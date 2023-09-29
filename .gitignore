@@ -6,12 +6,6 @@ target/
 #IntelliJ
 .idea/
 
-#logs
-.log
-
-#Temporary files
-.tmp
-
 # Windows
 Thumbs.db
 
