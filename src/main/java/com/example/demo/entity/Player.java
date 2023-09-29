@@ -49,7 +49,7 @@ public class Player {
   @Transient
   private String printADOrNot = "";
 
-  private String activationCode;
+  private String validationCode;
 
   private String email;
 
@@ -63,7 +63,7 @@ public class Player {
     this.name = name;
     this.password = password;
     this.email = email;
-    this.activationCode = RandomStringUtils.randomAlphanumeric(32);
+    this.validationCode = RandomStringUtils.randomAlphanumeric(32);
   }
 
 

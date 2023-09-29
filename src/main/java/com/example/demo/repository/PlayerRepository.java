@@ -16,7 +16,7 @@ PlayerRepository extends JpaRepository<Player, Integer> {
   List<Player> findPlayerByNameContaining(String name);
   Player findPlayerByName(String name);
   Player findPlayerByNameAndPassword(String name, String password);
-  Player findPlayerByActivationCode(String code);
+  Player findPlayerByValidationCode(String code);
   Player findPlayerByEmail(String email);
   @Modifying
   @Transactional
@@ -30,8 +30,8 @@ PlayerRepository extends JpaRepository<Player, Integer> {
   void updateAccountActivatedTrueByName(String name);
   @Modifying
   @Transactional
-  @Query("UPDATE Player p SET p.activationCode = :activationCode WHERE p.name = :name")
-  void updateActivationCodeByName(String activationCode, String name);
+  @Query("UPDATE Player p SET p.validationCode = :validationCode WHERE p.name = :name")
+  void updateValidationCodeByName(String validationCode, String name);
 
   @Modifying
   @Transactional

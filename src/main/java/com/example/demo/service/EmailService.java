@@ -18,13 +18,13 @@ public class EmailService {
 
     public void sendActivationEmail(String destinationEmail, Player player) {
         sendMail(destinationEmail, "Email Verification Link", "Click this link to confirm your email address and complete setup for your account."
-                + "\n\nVerification Link: " + "http://localhost:8080/ActivateAccount/" + player.getActivationCode());
+                + "\n\nVerification Link: " + "http://localhost:8080/ActivateAccount/" + player.getValidationCode());
     }
 
     public void sendPasswordResetEmail(String destinationEmail, Player player){
         if (validEmail(destinationEmail)){
             sendMail(player.getEmail(), "Reset Password", "Click this link to reset your password."
-                    + "\n\nLink to reset password: " + "http://localhost:8080/verifyResetPassword/" + player.getActivationCode());
+                    + "\n\nLink to reset password: " + "http://localhost:8080/verifyResetPassword/" + player.getValidationCode());
         }
     }
 

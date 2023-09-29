@@ -22,7 +22,7 @@ public class VerifyResetPasswordView extends VerticalLayout implements HasUrlPar
 
     @Override
     public void setParameter(BeforeEvent event, @WildcardParameter String parameter) {
-        Player player = playerRepository.findPlayerByActivationCode(parameter);
+        Player player = playerRepository.findPlayerByValidationCode(parameter);
         if (player != null) {
             VaadinSession.getCurrent().setAttribute("nameOfLoggedInUserOne", player.getName());
             VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", true);

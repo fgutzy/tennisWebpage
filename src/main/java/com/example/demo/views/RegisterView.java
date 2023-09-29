@@ -4,22 +4,16 @@ import com.example.demo.entity.Player;
 import com.example.demo.repository.PlayerRepository;
 import com.example.demo.service.EmailService;
 import com.example.demo.service.PlayerService;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.internal.constraintvalidators.bv.number.sign.PositiveOrZeroValidatorForLong;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.validation.constraints.Email;
 
 
 @Route("register")
@@ -100,7 +94,7 @@ public class RegisterView extends VerticalLayout {
                 notifyAndClearFields(email.getValue(), newPlayer, username, password1, password2, email);
             } else if (!existingPlayerByUsername.isAccountActivated()) { // Username is taken, but the account is not activated, update activation code and email
                 Player updatedPlayer = new Player(username.getValue(), password1.getValue(), email.getValue());
-                playerRepository.updateActivationCodeByName(updatedPlayer.getActivationCode(), updatedPlayer.getName());
+                playerRepository.updateValidationCodeByName(updatedPlayer.getValidationCode(), updatedPlayer.getName());
                 playerRepository.updateEmailByName(email.getValue(), updatedPlayer.getName());
                 notifyAndClearFields(email.getValue(), updatedPlayer, username, password1, password2, email);
             } else {// Username is taken and the account is activated
