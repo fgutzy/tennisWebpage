@@ -1,1 +1,22 @@
 application.properties
+
+# Maven
+target/
+
+#IntelliJ
+.idea/
+
+#logs
+.log
+
+#Temporary files
+.tmp
+
+# Windows
+Thumbs.db
+
+#
+mvnw*
+
+#
+.mvn/wrapper/
