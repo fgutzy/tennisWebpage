@@ -2,7 +2,6 @@ com\example\demo\repository\PlayerRepository.class
 com\example\demo\DemoApplication.class
 com\example\demo\views\MatchHistoryView.class
 com\example\demo\repository\MatchHistoryRepository.class
-com\example\demo\service\LogInService.class
 com\example\demo\views\RegisterView.class
 com\example\demo\service\MatchService.class
 com\example\demo\entity\Match.class

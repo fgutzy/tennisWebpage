@@ -39,4 +39,10 @@ class PlayerTest {
             playerService.pointScoringLogic(playerOne, playerTwo);
         }
     }
+
+    @Test
+    public void playerIsCreatedWithUsernameAlreadyInDatabaseButNotActivated(){
+        Player player = new Player("abcd", "abcd","abcd@abcd.abcd" );
+        
+    }
 }

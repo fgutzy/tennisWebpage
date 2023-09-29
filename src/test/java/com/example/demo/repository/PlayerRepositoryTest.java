@@ -35,7 +35,7 @@ class PlayerRepositoryTest {
 
     @Test
     public void findPlayerByEmail() {
-        assertEquals(playerRepository.findPlayerByEmail("ferdinand.gutzy@gmx.de").getName(), "a");
+        assertEquals(playerRepository.findPlayerByEmail("ferdinand.gutzy@gmx.de").getName(), "falkinger");
         assertEquals(playerRepository.findPlayerByEmail("ferdinand.gutzy@gmx.de") != null, true);
         assertEquals(playerRepository.findPlayerByEmail("ferdinand.gutzy99@gmx.de") == null, true);
     }
