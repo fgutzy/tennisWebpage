@@ -2,6 +2,7 @@ package com.example.demo.views;
 
 import com.example.demo.entity.Player;
 import com.example.demo.repository.PlayerRepository;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +19,14 @@ public class ActivateAccountView extends VerticalLayout implements HasUrlParamet
 
     @Override
     public void setParameter(BeforeEvent event, @WildcardParameter String parameter) {
-        Player player = playerRepository.findPlayerByActivationCode(parameter);
+        Player player = playerRepository.findPlayerByValidationCode(parameter);
         if (player != null) {
             if (player.isAccountActivated()) {
                 Notification.show("Account already activated.");
             } else {
-                playerRepository.setAccountActivatedTrueByName(player.getName());
+                playerRepository.updateAccountActivatedTrueByName(player.getName());
                 Notification.show("Account successfully verified. Please reload Page.");
+                UI.getCurrent().navigate("/login");
                 log.info("Account from user {} was verified", player.getName());
             }
         } else {

@@ -13,22 +13,25 @@ import org.springframework.transaction.annotation.Transactional;
 public interface
 PlayerRepository extends JpaRepository<Player, Integer> {
 
-  //returns a List of Players that contain a passed String value
   List<Player> findPlayerByNameContaining(String name);
-
   Player findPlayerByName(String name);
-
   Player findPlayerByNameAndPassword(String name, String password);
-  Player findPlayerByActivationCode(String code);
+  Player findPlayerByValidationCode(String code);
+  Player findPlayerByEmail(String email);
+  @Modifying
+  @Transactional
+  @Query("UPDATE Player p SET p.password = :newPassword WHERE p.name = :name")
+  void updatePasswordByName(String newPassword, String name);
+
 
   @Modifying
   @Transactional
   @Query("UPDATE Player p SET p.accountActivated = true WHERE p.name = :name")
-  void setAccountActivatedTrueByName(String name);
+  void updateAccountActivatedTrueByName(String name);
   @Modifying
   @Transactional
-  @Query("UPDATE Player p SET p.activationCode = :activationCode WHERE p.name = :name")
-  void updateActivationCodeByName(String activationCode, String name);
+  @Query("UPDATE Player p SET p.validationCode = :validationCode WHERE p.name = :name")
+  void updateValidationCodeByName(String validationCode, String name);
 
   @Modifying
   @Transactional
@@ -42,5 +45,4 @@ PlayerRepository extends JpaRepository<Player, Integer> {
           "games_lost = games_lost + CASE WHEN name_of_player = ?2 THEN 1 ELSE 0 END " +
           "WHERE name_of_player IN (?1, ?2)", nativeQuery = true)
   void countWinOrLoss(String winningPlayer, String losingPlayer);
-
 }

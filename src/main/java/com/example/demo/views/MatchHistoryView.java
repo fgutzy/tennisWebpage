@@ -40,12 +40,11 @@ public class MatchHistoryView extends VerticalLayout {
                 (boolean) VaadinSession.getCurrent().getAttribute("playerOneLoggedIn") ? "Log In" : "Log Out");
 
         loginLogoutButton.addClickListener(event -> {
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if(loginLogoutButton.getText().equals("Log In")){
+                UI.getCurrent().navigate("/login");
+            }else {
+                VaadinSession.getCurrent().getSession().invalidate();
             }
-            UI.getCurrent().navigate("/login");
             VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", false);
             VaadinSession.getCurrent().setAttribute("playerTwoLoggedIn", false);
         });

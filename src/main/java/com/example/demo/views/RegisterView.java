@@ -4,9 +4,6 @@ import com.example.demo.entity.Player;
 import com.example.demo.repository.PlayerRepository;
 import com.example.demo.service.EmailService;
 import com.example.demo.service.PlayerService;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
@@ -21,26 +18,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("register")
 @Slf4j
-public class RegisterView extends Composite {
+public class RegisterView extends VerticalLayout {
 
     @Autowired
     PlayerRepository playerRepository;
 
-    @Autowired
     EmailService emailService;
 
-    @Autowired
     PlayerService playerService;
 
-    @Override
-    protected Component initContent() {
+
+    @Autowired
+    public RegisterView(EmailService emailService, PlayerService playerService) {
+        this.emailService = emailService;
+        this.playerService = playerService;
 
         TextField username = new TextField("Username");
         PasswordField password1 = new PasswordField("Password");
         PasswordField password2 = new PasswordField("Confirm Password");
         TextField email = new TextField("Email address");
 
-        VerticalLayout layout = new VerticalLayout(
+
+        add(
                 new H2("Register"),
                 username,
                 password1,
@@ -49,56 +48,70 @@ public class RegisterView extends Composite {
                 new Button("Done", event -> {
                     try {
                         register(
-                                username.getValue(),
-                                password1.getValue(),
-                                password2.getValue(),
-                                email.getValue()
+                                username,
+                                password1,
+                                password2,
+                                email
                         );
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
                 })
         );
-        layout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
-        return layout;
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        setAlignItems(FlexComponent.Alignment.CENTER);
     }
 
 
-    private void register(String username, String password1, String password2, String email) throws InterruptedException {
+    private void register(TextField username, PasswordField password1, PasswordField password2, TextField email) throws InterruptedException {
 
         // Validate username
-        if (username.isEmpty() || username.contains(" ") || username.equalsIgnoreCase("admin")) {
+        if (username.getValue().isEmpty() || username.getValue().contains(" ") || username.getValue().equalsIgnoreCase("admin")) {
             Notification.show("Invalid username");
             return;
         }
 
-        if (!password1.equals(password2) || password1.length() < 5) {
+        if (!password1.getValue().equals(password2.getValue()) || password1.getValue().length() < 5) {
             Notification.show("Passwords don't match or are too short (min. 5 characters)");
             return;
         }
 
-        if (!emailService.validEmail(email)) {
+        if (!emailService.validEmail(email.getValue())) {
             Notification.show("Please enter valid email");
             return;
         }
 
+        //check if Player is allowed to register and act accordingly
+        Player existingPlayerByEmail = playerRepository.findPlayerByEmail(email.getValue());
 
-        // Check if username already exists in database and respond accordingly
-        Player player = playerRepository.findPlayerByName(username);
-        if (player == null || !player.isAccountActivated()) {
-            Thread.sleep(1500);
-            Notification.show("Please verify your registration mail");
-            Player newPlayer = new Player(username, playerService.hashPassword(password1), email);
-            emailService.sendMail(email, newPlayer);
-            if (player == null) {
-                playerRepository.save(newPlayer);
-                log.info("User {} was saved", newPlayer.getName());
-            } else {
-                playerRepository.updateActivationCodeByName(newPlayer.getActivationCode(), newPlayer.getName());
-                playerRepository.updateEmailByName(newPlayer.getEmail(), newPlayer.getName());
-            }
+        if (existingPlayerByEmail != null) {
+            Notification.show("You already created an account with this email");
         } else {
-            Notification.show("Username is taken");
+            Player existingPlayerByUsername = playerRepository.findPlayerByName(username.getValue());
+            if (existingPlayerByUsername == null) { // Both email and username are available, create a new player
+                Player newPlayer = new Player(username.getValue(), playerService.hashPassword(password1.getValue()), email.getValue());
+                playerRepository.save(newPlayer);
+                notifyAndClearFields(email.getValue(), newPlayer, username, password1, password2, email);
+            } else if (!existingPlayerByUsername.isAccountActivated()) { // Username is taken, but the account is not activated, update activation code and email
+                Player updatedPlayer = new Player(username.getValue(), password1.getValue(), email.getValue());
+                playerRepository.updateValidationCodeByName(updatedPlayer.getValidationCode(), updatedPlayer.getName());
+                playerRepository.updateEmailByName(email.getValue(), updatedPlayer.getName());
+                notifyAndClearFields(email.getValue(), updatedPlayer, username, password1, password2, email);
+            } else {// Username is taken and the account is activated
+                Notification.show("Username taken");
+            }
         }
     }
+
+
+    private void notifyAndClearFields(String destinationEmail, Player registeredPlayer, TextField username, PasswordField password1,PasswordField password2, TextField email ){
+        emailService.sendActivationEmail(destinationEmail, registeredPlayer);
+        log.info("User {} was saved", registeredPlayer.getName());
+        Notification.show("Please verify your registration email");
+        username.clear();
+        password1.clear();
+        password2.clear();
+        email.clear();
+    }
 }
+
