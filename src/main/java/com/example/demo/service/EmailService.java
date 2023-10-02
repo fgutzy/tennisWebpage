@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class EmailService {
-/*
+
     @Autowired
     JavaMailSender javaMailSender;
 
@@ -46,6 +46,4 @@ public class EmailService {
     public boolean validEmail(String email) {
         return EmailValidator.getInstance().isValid(email);
     }
-
- */
 }
