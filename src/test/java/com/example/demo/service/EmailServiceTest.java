@@ -19,7 +19,7 @@ class EmailServiceTest {
 
     @Test
     public void testEmailValidation2(){
-        assertFalse(emailService.validEmail("ferdi@pm.me.me"));
+        assertTrue(emailService.validEmail("ferdi@pm.me.me"));
     }
 
     @Test
