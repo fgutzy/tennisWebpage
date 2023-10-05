@@ -1,9 +1,12 @@
 package com.example.demo.entity;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import javax.persistence.*;
 import lombok.*;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 
 @Entity
@@ -11,11 +14,12 @@ import org.apache.commons.lang3.RandomStringUtils;
 @Table(name = "tbl_player")
 @NoArgsConstructor
 public class Player {
-  //secret comment added
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @GeneratedValue(generator = "uuid2")
+  @GenericGenerator(name = "uuid2", strategy = "uuid2")
+  @Type(type = "uuid-char")
+  private UUID id;
 
   private String password;
 

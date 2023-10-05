@@ -29,7 +29,10 @@ class PlayerRepositoryTest {
     @Test
     public void savePlayer() {
         Player player = new Player("testPlayer6");
-        playerRepository.save(player);
+        System.out.println(player.getId());
+        Player player2 = new Player("testPlayer6");
+        System.out.println(player2.getId());
+        playerRepository.save(player2);
     }
 
     @Test
@@ -45,7 +48,5 @@ class PlayerRepositoryTest {
         assertEquals(playerRepository.findPlayerByEmail("ferdinand.gutzy@gmx.de") != null, true);
         assertEquals(playerRepository.findPlayerByEmail("ferdinand.gutzy99@gmx.de") == null, true);
     }
-
  */
-
 }
