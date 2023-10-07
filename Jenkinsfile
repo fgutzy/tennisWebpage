@@ -10,6 +10,8 @@ pipeline {
        stage('Build') {
            steps {
                script {
+                    echo "innerhalb if"
+                   /*
                    // Perform a clean install
                    def installResult = sh(returnStatus: true, script: 'mvn clean install')
 
@@ -17,12 +19,11 @@ pipeline {
                    if (installResult == 0) {
                        // If it succeeded, build the package
                        //sh 'mvn clean package'
-                       echo "innerhalb if"
                    } else {
                        // If 'mvn clean install' failed, stop the pipeline
-                       echo "außerhalb if"
                        error('Failed to install artifacts with mvn clean install')
                    }
+                   */
                }
            }
        }
