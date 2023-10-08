@@ -1,8 +1,13 @@
 pipeline {
     agent any
+    environment {
+        DATABASE_USERNAME = credentials('ferdi')
+        DATABASE_PASSWORD = credentials('mA#x&NOy!FfWsB9i')
+    }
    tools {
         maven '3.9.5'
     }
+
     stages {
         stage('credentials'){
             steps{
