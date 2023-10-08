@@ -4,7 +4,7 @@ pipeline {
         maven '3.9.5'
     }
     stages {
-        stage('credentials'{
+        stage('credentials'){
                      echo "DATABASE_URL: ${params.DATABASE_URL}"  
                     echo "DB_USERNAME: ${params.DB_USERNAME}"    
                     echo "DB_PASSWORD: ${params.DB_PASSWORD}"  
