@@ -7,6 +7,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                sh 'mvn --version'
             }
         }
        stage('Build') {
