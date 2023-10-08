@@ -15,8 +15,8 @@ pipeline {
             steps{
                 script{ 
                 
-                    echo "DATABASE_USERNAME: ${env.DATABASE_USERNAME}"  
-                    echo "DATABASE_PASSWORD: ${env.DATABASE_PASSWORD}" 
+                    echo "DATABASE_USERNAME: ${DB_USERNAME}"  
+                    echo "DATABASE_PASSWORD: ${DB_PASSWORD}" 
                 }
             }
         }
