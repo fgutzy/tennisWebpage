@@ -11,10 +11,9 @@ pipeline {
     stages {
         stage('credentials'){
             steps{
-                script{
-                     echo "DATABASE_URL: ${params.DATABASE_URL}"  
-                    echo "DB_USERNAME: ${params.DB_USERNAME}"    
-                    echo "DB_PASSWORD: ${params.DB_PASSWORD}"  
+                script{ 
+                    echo "DATABASE_USERNAME: ${env.DATABASE_USERNAME}"  
+                    echo "DATABASE_PASSWORD: ${env.DATABASE_PASSWORD}" 
                 }
             }
         }
