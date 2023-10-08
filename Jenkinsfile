@@ -5,6 +5,11 @@ pipeline {
         maven '3.9.5'
     }
 
+    environment {
+        DB_USERNAME = 'ferdi'
+        DB_PASSWORD    = 'mA#x&NOy!FfWsB9i'
+    }
+
     stages {
         stage('credentials'){
             steps{
