@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        DB_USERNAME = 'ferdihahahha'
+        DB_USERNAME = 'ferdi'
         DB_PASSWORD    = 'mA#x&NOy!FfWsB9i'
         DB_URL = 'jdbc:mysql://192.168.1.103:3306/tennis_db'
     }
