@@ -9,7 +9,7 @@ pipeline {
         stage('credentials'){
             steps{
                 script{ 
-                    echo "Database engine is ${DB_ENGINE}"
+                
                     echo "DATABASE_USERNAME: ${env.DATABASE_USERNAME}"  
                     echo "DATABASE_PASSWORD: ${env.DATABASE_PASSWORD}" 
                 }
