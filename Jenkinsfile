@@ -5,22 +5,10 @@ pipeline {
         maven '3.9.5'
     }
 
-    environment {
-       // DB_USERNAME = 'ferdi'
-       // DB_PASSWORD    = 'mA#x&NOy!FfWsB9i'
-     //   DB_URL = 'jdbc:mysql://192.168.1.103:3306/tennis_db'
-    }
+  
 
     stages {
-        stage('credentials'){
-            steps{
-                script{ 
-                
-                    echo "DATABASE_USERNAME: ${DB_USERNAME}"  
-                    echo "DATABASE_PASSWORD: ${DB_PASSWORD}" 
-                }
-            }
-        }
+      
         stage('Checkout') {
             steps {
                 checkout scm
