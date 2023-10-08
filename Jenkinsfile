@@ -5,9 +5,11 @@ pipeline {
     }
     stages {
         stage('credentials'){
+            script{
                      echo "DATABASE_URL: ${params.DATABASE_URL}"  
                     echo "DB_USERNAME: ${params.DB_USERNAME}"    
                     echo "DB_PASSWORD: ${params.DB_PASSWORD}"  
+            }
         }
         stage('Checkout') {
             steps {
