@@ -29,7 +29,7 @@ class PlayerRepositoryTest {
     public void abc(){
         Player player = new Player("hihuabc");
         playerRepository.save(player);
-        assertEquals("hihuabc", playerRepository.findPlayerByName("hihuabc"));
+        assertEquals(playerRepository.findPlayerByName("hihuabc").getName(),"hihuabc");
     }
 /*
     @Autowired
