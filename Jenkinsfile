@@ -5,8 +5,6 @@ pipeline {
         maven '3.9.5'
     }
 
-  
-
     stages {
       
         stage('Checkout') {
@@ -26,7 +24,7 @@ pipeline {
                    // Check if 'mvn clean install' was successful
                    if (installResult == 0) {
                        // If it succeeded, build the package
-                       //sh 'mvn clean package'
+                       sh 'mvn clean package'
                    } else {
                        // If 'mvn clean install' failed, stop the pipeline
                        error('Failed to install artifacts with mvn clean install')
@@ -37,7 +35,7 @@ pipeline {
        }
         stage('Test') {
             steps {
-               // sh 'mvn test'
+                sh 'mvn test'
                 echo "tests"
             }
         }

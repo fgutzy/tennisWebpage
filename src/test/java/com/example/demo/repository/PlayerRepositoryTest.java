@@ -17,9 +17,19 @@ import static org.hibernate.validator.internal.util.Contracts.assertTrue;
 @SpringBootTest
 class PlayerRepositoryTest {
 
+    @Autowired
+    private PlayerRepository playerRepository;
+
     @Test
     public void jokinger(){
         assertEquals("A", "A");
+    }
+
+    @Test
+    public void abc(){
+        Player player = new Player("hihuabc");
+        playerRepository.save(player);
+        assertEquals("hihuabc", playerRepository.findPlayerByName("hihuabc"));
     }
 /*
     @Autowired
