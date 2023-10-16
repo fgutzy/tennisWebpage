@@ -27,9 +27,9 @@ class PlayerRepositoryTest {
 
     @Test
     public void abc(){
-        Player player = new Player("plpl");
+        Player player = new Player("mkmk");
         playerRepository.save(player);
-        assertEquals(playerRepository.findPlayerByName("plpl").getName(),"plpl");
+        assertEquals(playerRepository.findPlayerByName("mkmk").getName(),"mkmk");
     }
 /*
     @Autowired
