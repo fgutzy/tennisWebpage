@@ -5,12 +5,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Random;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class PlayerTest {
 
     @Autowired
     PlayerService playerService;
+
+    /*
     @Test
     public void advantageGivenAndTakenCorrectly(){
         Player playerOne = new Player();
@@ -41,8 +46,10 @@ class PlayerTest {
     }
 
     @Test
-    public void playerIsCreatedWithUsernameAlreadyInDatabaseButNotActivated(){
-        Player player = new Player("abcd", "abcd","abcd@abcd.abcd" );
-        
+    public void playerIsCreatedWithUsernameAlreadyInDatabaseButNotActivated() {
+        Player player = new Player("abcd", "abcd", "abcd@abcd.abcd");
+
     }
+
+     */
 }

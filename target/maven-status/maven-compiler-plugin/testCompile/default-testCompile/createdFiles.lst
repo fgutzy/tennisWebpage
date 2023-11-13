@@ -1,2 +1,4 @@
 com\example\demo\DemoApplicationTests.class
 com\example\demo\repository\PlayerRepositoryTest.class
+com\example\demo\service\EmailServiceTest.class
+com\example\demo\entity\PlayerTest.class

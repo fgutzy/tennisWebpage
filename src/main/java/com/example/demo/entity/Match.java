@@ -33,7 +33,6 @@ public class Match {
     @Setter
     private String playerTwo;
 
-
     public Match(String playerOne, String playerTwo, String finalScore) {
         this.playerOne = playerOne;
         this.playerTwo = playerTwo;

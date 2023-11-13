@@ -1,8 +1,9 @@
- FROM openjdk:11
-WORKDIR /
-ADD target/demo-0.0.1-SNAPSHOT.jar app.jar
-RUN useradd -m myuser
-USER myuser
-EXPOSE 8080
+FROM jenkins/jenkins:latest
 
-CMD java -jar -Dspring.profiles.active=prod app.jar
+USER root
+
+# Install Maven
+RUN apt-get update && apt-get install -y maven
+
+# Switch back to the Jenkins user
+USER jenkins

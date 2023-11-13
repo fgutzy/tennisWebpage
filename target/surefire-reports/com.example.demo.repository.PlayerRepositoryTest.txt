@@ -1,8 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.example.demo.repository.PlayerRepositoryTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.426 s <<< FAILURE! - in com.example.demo.repository.PlayerRepositoryTest
-findPlayerByEmail  Time elapsed: 0.123 s  <<< ERROR!
-java.lang.IllegalArgumentException: <falkinger> is not equal to <a>
-	at com.example.demo.repository.PlayerRepositoryTest.findPlayerByEmail(PlayerRepositoryTest.java:38)
-
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 22.816 s - in com.example.demo.repository.PlayerRepositoryTest

@@ -90,6 +90,7 @@ public class RegisterView extends VerticalLayout {
             Player existingPlayerByUsername = playerRepository.findPlayerByName(username.getValue());
             if (existingPlayerByUsername == null) { // Both email and username are available, create a new player
                 Player newPlayer = new Player(username.getValue(), playerService.hashPassword(password1.getValue()), email.getValue());
+                System.out.println("haha " + newPlayer.getId() + " hihi " + newPlayer.getName());
                 playerRepository.save(newPlayer);
                 notifyAndClearFields(email.getValue(), newPlayer, username, password1, password2, email);
             } else if (!existingPlayerByUsername.isAccountActivated()) { // Username is taken, but the account is not activated, update activation code and email
