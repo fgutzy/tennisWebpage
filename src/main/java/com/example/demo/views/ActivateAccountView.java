@@ -2,6 +2,8 @@ package com.example.demo.views;
 
 import com.example.demo.entity.Player;
 import com.example.demo.repository.PlayerRepository;
+import com.example.demo.service.PlayerService;
+import com.example.demo.service.dto.PlayerDto;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
@@ -17,9 +19,12 @@ public class ActivateAccountView extends VerticalLayout implements HasUrlParamet
     @Autowired
     PlayerRepository playerRepository;
 
+    PlayerService playerService;
+
     @Override
     public void setParameter(BeforeEvent event, @WildcardParameter String parameter) {
-        Player player = playerRepository.findPlayerByValidationCode(parameter);
+        PlayerDto player = playerService.findPlayerByValidationCode(parameter);
+        //Player player = playerRepository.findPlayerByValidationCode(parameter);
         if (player != null) {
             if (player.isAccountActivated()) {
                 Notification.show("Account already activated.");

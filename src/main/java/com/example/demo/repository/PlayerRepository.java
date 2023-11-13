@@ -41,8 +41,8 @@ PlayerRepository extends JpaRepository<Player, Integer> {
   @Modifying
   @Transactional
   @Query(value = "UPDATE tbl_player SET games_played = games_played + 1, " +
-          "games_won = games_won + CASE WHEN name_of_player = ?1 THEN 1 ELSE 0 END, " +
-          "games_lost = games_lost + CASE WHEN name_of_player = ?2 THEN 1 ELSE 0 END " +
-          "WHERE name_of_player IN (?1, ?2)", nativeQuery = true)
+          "games_won = games_won + CASE WHEN name = ?1 THEN 1 ELSE 0 END, " +
+          "games_lost = games_lost + CASE WHEN name = ?2 THEN 1 ELSE 0 END " +
+          "WHERE name IN (?1, ?2)", nativeQuery = true)
   void countWinOrLoss(String winningPlayer, String losingPlayer);
 }

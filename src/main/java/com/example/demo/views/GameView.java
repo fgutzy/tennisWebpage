@@ -5,6 +5,7 @@ import com.example.demo.entity.Player;
 import com.example.demo.repository.MatchHistoryRepository;
 import com.example.demo.service.GameService;
 import com.example.demo.service.PlayerService;
+import com.example.demo.service.dto.PlayerDto;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -44,8 +45,10 @@ public class GameView extends VerticalLayout {
   Label scoreLabelPlayerTwo;
 
   //create players but set name after start button was pressed (cant take value from name field without refresh)
-  Player playerOne = new Player("");
-  Player playerTwo = new Player("");
+  PlayerDto playerOne = new PlayerDto();
+  PlayerDto playerTwo = new PlayerDto();
+  //Player playerOne = new Player("");
+  //Player playerTwo = new Player("");
 
   public GameView(PlayerService playerService, GameService gameService, MatchHistoryRepository matchHistoryRepository) {
     this.playerService = playerService;
@@ -172,7 +175,7 @@ public class GameView extends VerticalLayout {
   }
 
   //-1 needed bc after every won set, gamesStorage + 0
-  String displayFinalScore(Player playerOne, Player playerTwo){
+  String displayFinalScore(PlayerDto playerOne, PlayerDto playerTwo){
     StringBuilder message = new StringBuilder();
     for (int i = 0; i < playerOne.gamesStorage.size()-1; i++){
       message.append(playerOne.gamesStorage.get(i)).append(":").append(playerTwo.gamesStorage.get(i)).append(" ");
@@ -180,7 +183,7 @@ public class GameView extends VerticalLayout {
     return message.toString();
   }
 
-  void buttonScoringLogic(Player scoringPlayer, Player otherPlayer){
+  void buttonScoringLogic(PlayerDto scoringPlayer, PlayerDto otherPlayer){
     playerService.pointScored(scoringPlayer, otherPlayer, tiebreakMessage);
 
     if (scoringPlayer.getSets() ==
