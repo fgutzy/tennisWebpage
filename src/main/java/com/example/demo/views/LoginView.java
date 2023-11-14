@@ -1,7 +1,10 @@
 package com.example.demo.views;
 
+import com.example.demo.entity.Player;
 import com.example.demo.repository.PlayerRepository;
 import com.example.demo.service.PlayerService;
+import com.example.demo.service.dto.PlayerDataDto;
+import com.example.demo.service.dto.PlayerDto;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
@@ -37,18 +40,22 @@ public class LoginView extends VerticalLayout {
                 username,
                 password,
                 new Button("Login", event -> {
-                    if (playerService.matchPassword(password.getValue(),
-                            playerRepository.findPlayerByName(username.getValue()).getPassword()) &&
-                            playerRepository.findByNameAndAccountActivatedIsTrue(username.getValue()) != null) {
-                        VaadinSession.getCurrent().setAttribute("username", username.getValue());
-                        VaadinSession.getCurrent().setAttribute("nameOfLoggedInUserOne", username.getValue());
-                        VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", true);
-                        log.info("User {} logged in", username);
-                        UI.getCurrent().navigate("/game");
+                    PlayerDataDto playerDto = playerService.findPlayerDataByName(username.getValue());
+                    if (playerDto != null) {
+                        if (playerService.matchPassword(password.getValue(),
+                                playerDto.getPassword()) &&
+                                playerDto.isAccountActivated()) {
+                            VaadinSession.getCurrent().setAttribute("username", username.getValue());
+                            VaadinSession.getCurrent().setAttribute("nameOfLoggedInUserOne", username.getValue());
+                            VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", true);
+                            log.info("User {} logged in", username);
+                            UI.getCurrent().navigate("/game");
+                        }
                     } else {
                         Notification.show("User doesnt exist, or wrong credentials");
                         log.warn("User tried to log in with wrong credentials.");
                     }
+
                 }),
                 new RouterLink("Reset password", ForgotPasswordView.class),
                 new RouterLink("Play against other user", MultiplayerView.class),

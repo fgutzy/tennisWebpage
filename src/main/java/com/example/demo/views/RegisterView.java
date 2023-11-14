@@ -40,7 +40,6 @@ public class RegisterView extends VerticalLayout {
         PasswordField password2 = new PasswordField("Confirm Password");
         TextField email = new TextField("Email address");
 
-
         add(
                 new H2("Register"),
                 username,
