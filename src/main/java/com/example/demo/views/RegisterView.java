@@ -89,7 +89,7 @@ public class RegisterView extends VerticalLayout {
         if (existingPlayerByEmail != null) {
             Notification.show("An account was already created with this email");
         } else {
-            PlayerDataDto existingPlayerByUsername = playerService.findPlayerByName(username.getValue());
+            PlayerDataDto existingPlayerByUsername = playerService.findPlayerDataByName(username.getValue());
             if (existingPlayerByUsername == null) { // Both email and username are available, create a new player
                 Player newPlayer = new Player(username.getValue(), playerService.hashPassword(password1.getValue()), email.getValue());
                 playerRepository.save(newPlayer);

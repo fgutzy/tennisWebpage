@@ -2,7 +2,6 @@ package com.example.demo.views;
 
 
 import com.example.demo.service.PlayerService;
-import com.example.demo.service.dto.PlayerDataDto;
 import com.example.demo.service.dto.PlayerDto;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;

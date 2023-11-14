@@ -1,8 +1,8 @@
 package com.example.demo.views;
 
-import com.example.demo.entity.Player;
 import com.example.demo.repository.PlayerRepository;
 import com.example.demo.service.PlayerService;
+import com.example.demo.service.dto.PlayerDto;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
@@ -38,7 +38,7 @@ public class ResetPasswordView extends VerticalLayout {
                     String playerName = VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne") != null ?
                             (String) VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne") : null;
 
-                    Player player = playerRepository.findPlayerByName(playerName);
+                    PlayerDto player = playerService.findPlayerByName(playerName);
 
                     if (player != null && passwordsMatch(password.getValue(), repeatPassword.getValue())) {
                         String hashedPassword = playerService.hashPassword(password.getValue());

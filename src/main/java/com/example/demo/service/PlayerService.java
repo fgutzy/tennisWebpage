@@ -7,9 +7,7 @@ import com.example.demo.service.dto.PlayerDto;
 import com.example.demo.service.dto.PlayerDataDto;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.server.VaadinSession;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.query.JSqlParserUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -231,16 +229,25 @@ public class PlayerService {
     public PlayerDataDto findPlayerByEmail(String email) {
         Player player = playerRepository.findPlayerByEmail(email);
         if (player != null) {
-            return dtoFactory.createPlayerRegistrationDto(player);
+            return dtoFactory.createPlayerDataDto(player);
         } else {
             return null;
         }
     }
 
-    public PlayerDataDto findPlayerByName(String name) {
+    public PlayerDataDto findPlayerDataByName(String name) {
         Player player = playerRepository.findPlayerByEmail(name);
         if (player != null) {
-            return dtoFactory.createPlayerRegistrationDto(player);
+            return dtoFactory.createPlayerDataDto(player);
+        } else {
+            return null;
+        }
+    }
+
+    public PlayerDto findPlayerByName(String name) {
+        Player player = playerRepository.findPlayerByEmail(name);
+        if (player != null) {
+            return dtoFactory.createDto(player);
         } else {
             return null;
         }

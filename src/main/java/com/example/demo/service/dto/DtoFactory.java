@@ -15,7 +15,7 @@ public class DtoFactory {
         return mapper.map(player, PlayerDto.class);
     }
 
-    public PlayerDataDto createPlayerRegistrationDto(Player player){
+    public PlayerDataDto createPlayerDataDto(Player player){
         return mapper.map(player, PlayerDataDto.class);
     }
 }
