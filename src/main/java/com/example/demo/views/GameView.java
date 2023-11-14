@@ -1,10 +1,10 @@
 package com.example.demo.views;
 
 import com.example.demo.entity.Match;
-import com.example.demo.entity.Player;
 import com.example.demo.repository.MatchHistoryRepository;
 import com.example.demo.service.GameService;
 import com.example.demo.service.PlayerService;
+import com.example.demo.service.dto.PlayerDto;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -44,8 +44,8 @@ public class GameView extends VerticalLayout {
   Label scoreLabelPlayerTwo;
 
   //create players but set name after start button was pressed (cant take value from name field without refresh)
-  Player playerOne = new Player("");
-  Player playerTwo = new Player("");
+  PlayerDto playerOne = new PlayerDto();
+  PlayerDto playerTwo = new PlayerDto();
 
   public GameView(PlayerService playerService, GameService gameService, MatchHistoryRepository matchHistoryRepository) {
     this.playerService = playerService;
@@ -128,13 +128,13 @@ public class GameView extends VerticalLayout {
     //startOrEndButton is clicked
     startOrEndButton.addClickListener(e -> {
 
+      //method for filling up length differences in names to be more esthetic
       gameService.setPlayerNames(playerOne, playerOneNameField, playerTwo, playerTwoNameField);
 
       //after game is started change the buttons text, colour and display the score (0,0),
       // and create buttons with name of players
       if (startClick) {
 
-        //method for filling up length differences in names to be more esthetic
         gameService
             .setVariablesReadyForGame(playerOne, playerOneNameField, playerOneButton, playerTwo,
                 playerTwoNameField,
@@ -156,7 +156,6 @@ public class GameView extends VerticalLayout {
       }
     });
 
-    //buttonLogic(playerOneButton, playerOne, playerTwo);
     playerOneButton.addClickListener(o -> {
       buttonScoringLogic(playerOne, playerTwo);
       gameService.getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
@@ -172,7 +171,7 @@ public class GameView extends VerticalLayout {
   }
 
   //-1 needed bc after every won set, gamesStorage + 0
-  String displayFinalScore(Player playerOne, Player playerTwo){
+  String displayFinalScore(PlayerDto playerOne, PlayerDto playerTwo){
     StringBuilder message = new StringBuilder();
     for (int i = 0; i < playerOne.gamesStorage.size()-1; i++){
       message.append(playerOne.gamesStorage.get(i)).append(":").append(playerTwo.gamesStorage.get(i)).append(" ");
@@ -180,7 +179,7 @@ public class GameView extends VerticalLayout {
     return message.toString();
   }
 
-  void buttonScoringLogic(Player scoringPlayer, Player otherPlayer){
+  void buttonScoringLogic(PlayerDto scoringPlayer, PlayerDto otherPlayer){
     playerService.pointScored(scoringPlayer, otherPlayer, tiebreakMessage);
 
     if (scoringPlayer.getSets() ==
@@ -189,10 +188,10 @@ public class GameView extends VerticalLayout {
       Match match = new Match(scoringPlayer.getName(), otherPlayer.getName(), displayFinalScore(scoringPlayer, otherPlayer));
         matchHistoryRepository.save(match);
 
-        //updating wins, loses and games played in SQL and for each Entitiy (for winning percentag)
+        //updating wins, loses and games played in SQL and for each Entity (for winning percentage)
       playerService.countWinAndLoss(scoringPlayer.getName(), otherPlayer.getName());
 
-      //deacitvates all fields and updates the according result in SQL
+      //deactivates all fields and updates the according result in SQL
       gameService.setValuesToEndGame(scoringPlayer, playerOneButton, otherPlayer, playerTwoButton,
               startOrEndButton, buttonChoosingSetsNeededToWin);
 

@@ -1,7 +1,10 @@
 package com.example.demo.views;
 
-import com.example.demo.entity.Player;
-import com.example.demo.repository.PlayerRepository;
+//import com.example.demo.entity.Player;
+
+import com.example.demo.service.PlayerService;
+import com.example.demo.service.dto.PlayerDataDto;
+import com.example.demo.service.dto.PlayerDto;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -18,11 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class VerifyResetPasswordView extends VerticalLayout implements HasUrlParameter<String> {
 
     @Autowired
-    PlayerRepository playerRepository;
+    PlayerService playerService;
 
     @Override
     public void setParameter(BeforeEvent event, @WildcardParameter String parameter) {
-        Player player = playerRepository.findPlayerByValidationCode(parameter);
+        PlayerDto player = playerService.findPlayerByValidationCode(parameter);
         if (player != null) {
             VaadinSession.getCurrent().setAttribute("nameOfLoggedInUserOne", player.getName());
             VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", true);

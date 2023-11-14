@@ -1,6 +1,7 @@
 package com.example.demo.views;
 
 import com.example.demo.repository.PlayerRepository;
+import com.example.demo.service.PlayerService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
@@ -21,6 +22,9 @@ public class MultiplayerView extends VerticalLayout {
 
     @Autowired
     PlayerRepository playerRepository;
+
+    @Autowired
+    PlayerService playerService;
 
     public MultiplayerView() {
 
@@ -76,7 +80,8 @@ public class MultiplayerView extends VerticalLayout {
     }
 
     private boolean checkCredentials(TextField username, PasswordField password) {
-        if (playerRepository.findPlayerByNameAndPassword(username.getValue(), password.getValue()) != null) {
+        if (playerRepository.findByNameAndAccountActivatedIsTrue(username.getValue()) != null
+                && playerService.matchPassword(password.getValue(),playerRepository.findPlayerByName(username.getValue()).getPassword())) {
             username.setEnabled(false);
             password.setEnabled(false);
             return true;

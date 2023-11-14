@@ -1,8 +1,8 @@
 package com.example.demo.views;
 
-import com.example.demo.entity.Player;
-import com.example.demo.repository.PlayerRepository;
 import com.example.demo.service.EmailService;
+import com.example.demo.service.PlayerService;
+import com.example.demo.service.dto.PlayerDataDto;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ForgotPasswordView extends VerticalLayout {
 
     @Autowired
-    PlayerRepository playerRepository;
+    PlayerService playerService;
 
     EmailService emailService;
     @Autowired
@@ -33,7 +33,8 @@ public class ForgotPasswordView extends VerticalLayout {
                 new Button("Send", event -> {
                     Notification.show("Check your mails");
                     //only send mail if player was found
-                    Player player = playerRepository.findPlayerByEmail(email.getValue());
+                    PlayerDataDto player = playerService.findPlayerByEmail(email.getValue());
+                    //PlayerDto player = playerService.findPlayerByEmail(email.getValue());
                     if (player != null) {
                         emailService.sendPasswordResetEmail(email.getValue(), player);
                     }

@@ -1,9 +1,11 @@
 package com.example.demo.views;
 
+//import com.example.demo.entity.Player;
 import com.example.demo.entity.Player;
 import com.example.demo.repository.PlayerRepository;
 import com.example.demo.service.EmailService;
 import com.example.demo.service.PlayerService;
+import com.example.demo.service.dto.PlayerDataDto;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
@@ -82,15 +84,14 @@ public class RegisterView extends VerticalLayout {
         }
 
         //check if Player is allowed to register and act accordingly
-        Player existingPlayerByEmail = playerRepository.findPlayerByEmail(email.getValue());
+        PlayerDataDto existingPlayerByEmail = playerService.findPlayerByEmail(email.getValue());
 
         if (existingPlayerByEmail != null) {
-            Notification.show("You already created an account with this email");
+            Notification.show("An account was already created with this email");
         } else {
-            Player existingPlayerByUsername = playerRepository.findPlayerByName(username.getValue());
+            PlayerDataDto existingPlayerByUsername = playerService.findPlayerDataByName(username.getValue());
             if (existingPlayerByUsername == null) { // Both email and username are available, create a new player
                 Player newPlayer = new Player(username.getValue(), playerService.hashPassword(password1.getValue()), email.getValue());
-                System.out.println("haha " + newPlayer.getId() + " hihi " + newPlayer.getName());
                 playerRepository.save(newPlayer);
                 notifyAndClearFields(email.getValue(), newPlayer, username, password1, password2, email);
             } else if (!existingPlayerByUsername.isAccountActivated()) { // Username is taken, but the account is not activated, update activation code and email
@@ -105,7 +106,7 @@ public class RegisterView extends VerticalLayout {
     }
 
 
-    private void notifyAndClearFields(String destinationEmail, Player registeredPlayer, TextField username, PasswordField password1,PasswordField password2, TextField email ){
+    private void notifyAndClearFields(String destinationEmail, Player registeredPlayer, TextField username, PasswordField password1, PasswordField password2, TextField email ){
         emailService.sendActivationEmail(destinationEmail, registeredPlayer);
         log.info("User {} was saved", registeredPlayer.getName());
         Notification.show("Please verify your registration email");

@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 
-import com.example.demo.entity.Player;
+import com.example.demo.service.dto.PlayerDto;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -19,7 +19,7 @@ public class GameService {
   @Autowired
   PlayerService playerService;
 
-  public void setPlayerNames(Player playerOne, TextField playerOneNameField, Player playerTwo,
+  public void setPlayerNames(PlayerDto playerOne, TextField playerOneNameField, PlayerDto playerTwo,
                              TextField playerTwoNameField) {
 
     playerOne.setName(VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne") != null ?
@@ -39,11 +39,11 @@ public class GameService {
       playerTwo.setName("Player Two");
     }
 
-    playerService.bringNamesToSameLength(playerOne, playerTwo);
+    //playerService.bringNamesToSameLength(playerOne, playerTwo);
   }
 
-  public void setVariablesReadyForGame(Player playerOne, TextField playerOneNameField,
-                                       Button playerOneButton, Player playerTwo,
+  public void setVariablesReadyForGame(PlayerDto playerOne, TextField playerOneNameField,
+                                       Button playerOneButton, PlayerDto playerTwo,
                                        TextField playerTwoNameField, Button playerTwoButton,
                                        Button startOrEndButton, Label scoreLabelPlayerOne,
                                        Label scoreLabelPlayerTwo) {
@@ -82,7 +82,7 @@ public class GameService {
   }
 
 
-  public void setValuesToEndGame(Player playerOne, Button playerOneButton, Player playerTwo,
+  public void setValuesToEndGame(PlayerDto playerOne, Button playerOneButton, PlayerDto playerTwo,
                                  Button playerTwoButton,
                                  Button startOrEndButton,
                                  IntegerField buttonChoosingSetsNeededToWin) {
@@ -108,8 +108,8 @@ public class GameService {
     buttonChoosingSetsNeededToWin.setEnabled(false);
   }
 
-  public void getScore(Label lableOfPlayerOne, Player playerOne, Label labelOfPlayerTwo,
-                       Player playerTwo) {
+  public void getScore(Label lableOfPlayerOne, PlayerDto playerOne, Label labelOfPlayerTwo,
+                       PlayerDto playerTwo) {
     lableOfPlayerOne.setText(playerOne.getScoreOfPlayer());
     labelOfPlayerTwo.setText(playerTwo.getScoreOfPlayer());
   }
