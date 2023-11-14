@@ -13,44 +13,10 @@ class PlayerRepositoryTest {
 
     @Autowired
     private PlayerRepository playerRepository;
-
     @Test
-    public void jokinger(){
-        assertEquals("A", "A");
-    }
-
-    @Test
-    public void abc(){
+    public void saveAndRetrievePlayer(){
         Player player = new Player("petri");
         playerRepository.save(player);
         assertEquals(playerRepository.findPlayerByName("petri").getName(),"petri");
     }
-/*
-    @Autowired
-    private PlayerRepository playerRepository;
-
-
-    @Test
-    public void savePlayer() {
-        Player player = new Player("testPlayer6");
-        System.out.println(player.getId());
-        Player player2 = new Player("testPlayer6");
-        System.out.println(player2.getId());
-        playerRepository.save(player2);
-    }
-
-    @Test
-    public void printPlayerByNameContaining() {
-
-        List<Player> players = playerRepository.findPlayerByNameContaining("er");
-        System.out.println(players);
-    }
-
-    @Test
-    public void findPlayerByEmail() {
-        assertEquals(playerRepository.findPlayerByEmail("ferdinand.gutzy@gmx.de").getName(), "falkinger");
-        assertEquals(playerRepository.findPlayerByEmail("ferdinand.gutzy@gmx.de") != null, true);
-        assertEquals(playerRepository.findPlayerByEmail("ferdinand.gutzy99@gmx.de") == null, true);
-    }
- */
 }

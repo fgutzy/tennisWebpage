@@ -50,7 +50,6 @@ public class Multiplayer {
         int originalAmountGamesLost = playerTwo.getGamesLost();
         int originalAmountGamesPlayed = playerTwo.getGamesPlayed();
 
-        String name = "gutzy ";
         playerRepository.countWinOrLoss("gutzyyy", "gutzy2  ");
 
         playerOne = playerRepository.findPlayerByName("gutzyyy");

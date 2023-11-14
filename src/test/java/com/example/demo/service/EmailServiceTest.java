@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class EmailServiceTest {
-/*
+
     @Autowired
     EmailService emailService;
 
@@ -19,13 +19,11 @@ class EmailServiceTest {
 
     @Test
     public void testEmailValidation2(){
-        assertTrue(emailService.validEmail("ferdi@pm.me.me"));
+        assertTrue(emailService.validEmail("ferdi@pm.me1.me"));
     }
 
     @Test
     public void testEmailValidation3(){
-        assertFalse(emailService.validEmail("ferdi@abc.abc"));
+        assertFalse(emailService.validEmail("123@123"));
     }
-
- */
 }
