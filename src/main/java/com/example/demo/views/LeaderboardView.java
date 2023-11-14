@@ -1,8 +1,9 @@
 package com.example.demo.views;
 
 
-import com.example.demo.entity.Player;
 import com.example.demo.service.PlayerService;
+import com.example.demo.service.dto.PlayerDataDto;
+import com.example.demo.service.dto.PlayerDto;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -20,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @PageTitle("Leaderboard")
 public class LeaderboardView extends VerticalLayout {
 
-  Grid<Player> grid = new Grid<>(Player.class);
+  Grid<PlayerDto> grid = new Grid<>(PlayerDto.class);
   TextField filteredText = new TextField();
 
 
@@ -77,10 +78,10 @@ public class LeaderboardView extends VerticalLayout {
     grid.addClassName("score-grid");
     grid.setSizeFull();
     grid.removeAllColumns();
-    grid.addColumn(Player::getName).setHeader("Name").setSortable(true);
-    grid.addColumn(Player::getGamesWon).setHeader("Wins").setSortable(true);
-    grid.addColumn(Player::getGamesLost).setHeader("Losses").setSortable(true);
-    grid.addColumn(Player::getGamesPlayed).setHeader("Games Played").setSortable(true);
+    grid.addColumn(PlayerDto::getName).setHeader("Name").setSortable(true);
+    grid.addColumn(PlayerDto::getGamesWon).setHeader("Wins").setSortable(true);
+    grid.addColumn(PlayerDto::getGamesLost).setHeader("Losses").setSortable(true);
+    grid.addColumn(PlayerDto::getGamesPlayed).setHeader("Games Played").setSortable(true);
     //grid.addColumn(Player::getWinningPercentage).setHeader("Winning Percentage").setSortable(true);
   }
 }

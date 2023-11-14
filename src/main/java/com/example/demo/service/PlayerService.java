@@ -4,12 +4,16 @@ import com.example.demo.entity.Player;
 import com.example.demo.repository.PlayerRepository;
 import com.example.demo.service.dto.DtoFactory;
 import com.example.demo.service.dto.PlayerDto;
+import com.example.demo.service.dto.PlayerDataDto;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.server.VaadinSession;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.query.JSqlParserUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,6 +29,7 @@ public class PlayerService {
 
     @Autowired
     private DtoFactory dtoFactory;
+
 
     public String hashPassword(String password) {
         return passwordEncoder.encode(password);
@@ -191,31 +196,54 @@ public class PlayerService {
         paragraph.setText(player.isTiebreak() ? "Tiebreak" : "");
     }
 
-    public List<Player> findAll(String filteredText) {
-
+    public List<PlayerDto> findAll(String filteredText) {
+        List<PlayerDto> allDtoPlayers = new ArrayList<>();
         //return all Players if no filter was applied
         if (filteredText == null || filteredText.isEmpty()) {
-            return playerRepository.findAll();
+            List<Player> allPlayers = playerRepository.findAll();
+            for (Player player : allPlayers) {
+                PlayerDto playerDto = dtoFactory.createDto(player);
+                allDtoPlayers.add(playerDto);
+            }
         } else { //else return the Player whos name is containing the filteredText value
-            return playerRepository.findPlayerByNameContaining(filteredText);
+            for (Player player : playerRepository.findPlayerByNameContaining(filteredText)) {
+                allDtoPlayers.add(dtoFactory.createDto(player));
+            }
         }
+        return allDtoPlayers;
     }
 
-    //misses to update th winning percentage
+    //misses to update the winning percentage
     public void countWinAndLoss(String winningPlayer, String loosingPlayer) {
-        String playerOneName = VaadinSession.getCurrent().getAttribute("playerOneLoggedIn").toString();
-        System.out.println(playerOneName);
-        String playerTwoName = VaadinSession.getCurrent().getAttribute("playerTwoLoggedIn").toString();
-        System.out.println(playerTwoName);
-        if (playerOneName.equals("true") &&
-                playerTwoName.equals("true")){
-                playerRepository.countWinOrLoss(winningPlayer, loosingPlayer);
+        if (VaadinSession.getCurrent().getAttribute("playerOneLoggedIn").toString() != null &&
+                VaadinSession.getCurrent().getAttribute("playerOneLoggedIn").toString().equals("true") &&
+                VaadinSession.getCurrent().getAttribute("playerTwoLoggedIn").toString() != null &&
+                VaadinSession.getCurrent().getAttribute("playerTwoLoggedIn").toString().equals("true")) {
+            playerRepository.countWinOrLoss(winningPlayer.trim(), loosingPlayer.trim());
         }
     }
 
-    public PlayerDto findPlayerByValidationCode(String parameter) {
-        Player player = playerRepository.findPlayerByValidationCode(parameter);
+    public PlayerDto findPlayerByValidationCode(String validationCode) {
+        Player player = playerRepository.findPlayerByValidationCode(validationCode);
         return dtoFactory.createDto(player);
+    }
+
+    public PlayerDataDto findPlayerByEmail(String email) {
+        Player player = playerRepository.findPlayerByEmail(email);
+        if (player != null) {
+            return dtoFactory.createPlayerRegistrationDto(player);
+        } else {
+            return null;
+        }
+    }
+
+    public PlayerDataDto findPlayerByName(String name) {
+        Player player = playerRepository.findPlayerByEmail(name);
+        if (player != null) {
+            return dtoFactory.createPlayerRegistrationDto(player);
+        } else {
+            return null;
+        }
     }
 }
 

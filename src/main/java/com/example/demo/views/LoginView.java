@@ -39,7 +39,7 @@ public class LoginView extends VerticalLayout {
                 new Button("Login", event -> {
                     if (playerService.matchPassword(password.getValue(),
                             playerRepository.findPlayerByName(username.getValue()).getPassword()) &&
-                            playerRepository.findPlayerByName(username.getValue()).isAccountActivated()) {
+                            playerRepository.findByNameAndAccountActivatedIsTrue(username.getValue()) != null) {
                         VaadinSession.getCurrent().setAttribute("username", username.getValue());
                         VaadinSession.getCurrent().setAttribute("nameOfLoggedInUserOne", username.getValue());
                         VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", true);

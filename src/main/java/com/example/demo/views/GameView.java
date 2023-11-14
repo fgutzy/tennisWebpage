@@ -1,7 +1,6 @@
 package com.example.demo.views;
 
 import com.example.demo.entity.Match;
-import com.example.demo.entity.Player;
 import com.example.demo.repository.MatchHistoryRepository;
 import com.example.demo.service.GameService;
 import com.example.demo.service.PlayerService;
@@ -47,8 +46,6 @@ public class GameView extends VerticalLayout {
   //create players but set name after start button was pressed (cant take value from name field without refresh)
   PlayerDto playerOne = new PlayerDto();
   PlayerDto playerTwo = new PlayerDto();
-  //Player playerOne = new Player("");
-  //Player playerTwo = new Player("");
 
   public GameView(PlayerService playerService, GameService gameService, MatchHistoryRepository matchHistoryRepository) {
     this.playerService = playerService;
@@ -131,13 +128,13 @@ public class GameView extends VerticalLayout {
     //startOrEndButton is clicked
     startOrEndButton.addClickListener(e -> {
 
+      //method for filling up length differences in names to be more esthetic
       gameService.setPlayerNames(playerOne, playerOneNameField, playerTwo, playerTwoNameField);
 
       //after game is started change the buttons text, colour and display the score (0,0),
       // and create buttons with name of players
       if (startClick) {
 
-        //method for filling up length differences in names to be more esthetic
         gameService
             .setVariablesReadyForGame(playerOne, playerOneNameField, playerOneButton, playerTwo,
                 playerTwoNameField,
@@ -159,7 +156,6 @@ public class GameView extends VerticalLayout {
       }
     });
 
-    //buttonLogic(playerOneButton, playerOne, playerTwo);
     playerOneButton.addClickListener(o -> {
       buttonScoringLogic(playerOne, playerTwo);
       gameService.getScore(scoreLabelPlayerOne, playerOne, scoreLabelPlayerTwo, playerTwo);
@@ -192,10 +188,10 @@ public class GameView extends VerticalLayout {
       Match match = new Match(scoringPlayer.getName(), otherPlayer.getName(), displayFinalScore(scoringPlayer, otherPlayer));
         matchHistoryRepository.save(match);
 
-        //updating wins, loses and games played in SQL and for each Entitiy (for winning percentag)
+        //updating wins, loses and games played in SQL and for each Entity (for winning percentage)
       playerService.countWinAndLoss(scoringPlayer.getName(), otherPlayer.getName());
 
-      //deacitvates all fields and updates the according result in SQL
+      //deactivates all fields and updates the according result in SQL
       gameService.setValuesToEndGame(scoringPlayer, playerOneButton, otherPlayer, playerTwoButton,
               startOrEndButton, buttonChoosingSetsNeededToWin);
 

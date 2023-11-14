@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 
-import com.example.demo.entity.Player;
 import com.example.demo.service.dto.PlayerDto;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -40,7 +39,7 @@ public class GameService {
       playerTwo.setName("Player Two");
     }
 
-    playerService.bringNamesToSameLength(playerOne, playerTwo);
+    //playerService.bringNamesToSameLength(playerOne, playerTwo);
   }
 
   public void setVariablesReadyForGame(PlayerDto playerOne, TextField playerOneNameField,

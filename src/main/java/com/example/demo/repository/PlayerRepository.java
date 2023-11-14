@@ -15,7 +15,7 @@ PlayerRepository extends JpaRepository<Player, Integer> {
 
   List<Player> findPlayerByNameContaining(String name);
   Player findPlayerByName(String name);
-  Player findPlayerByNameAndPassword(String name, String password);
+  Player findByNameAndAccountActivatedIsTrue(String name);
   Player findPlayerByValidationCode(String code);
   Player findPlayerByEmail(String email);
   @Modifying
@@ -46,3 +46,5 @@ PlayerRepository extends JpaRepository<Player, Integer> {
           "WHERE name IN (?1, ?2)", nativeQuery = true)
   void countWinOrLoss(String winningPlayer, String losingPlayer);
 }
+
+
