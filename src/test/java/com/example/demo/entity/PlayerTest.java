@@ -11,11 +11,11 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class PlayerTest {
-
+/*
     @Autowired
     PlayerService playerService;
 
-    /*
+
     @Test
     public void advantageGivenAndTakenCorrectly(){
         Player playerOne = new Player();
@@ -49,7 +49,5 @@ class PlayerTest {
     public void playerIsCreatedWithUsernameAlreadyInDatabaseButNotActivated() {
         Player player = new Player("abcd", "abcd", "abcd@abcd.abcd");
 
-    }
-
-     */
+    }*/
 }
