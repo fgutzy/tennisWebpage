@@ -1,12 +1,11 @@
-package com.example.demo;
+package com.example.demo.AppConfig;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-
-public class ApplicationConfiguration {
+public class ModelMapperConfig {
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();

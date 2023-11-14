@@ -2,17 +2,11 @@ package com.example.demo.repository;
 
 
 import com.example.demo.entity.Player;
-
-import java.util.List;
-
-import com.vaadin.flow.component.notification.Notification;
-import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static com.helger.commons.mock.CommonsAssert.*;
-import static org.hibernate.validator.internal.util.Contracts.assertTrue;
+import static com.helger.commons.mock.CommonsAssert.assertEquals;
 
 @SpringBootTest
 class PlayerRepositoryTest {
