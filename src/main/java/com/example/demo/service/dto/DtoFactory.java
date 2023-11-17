@@ -1,6 +1,6 @@
 package com.example.demo.service.dto;
 
-import com.example.demo.entity.Player;
+import com.example.demo.persitence.Player;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -18,4 +18,5 @@ public class DtoFactory {
     public PlayerDataDto createPlayerDataDto(Player player){
         return mapper.map(player, PlayerDataDto.class);
     }
+
 }

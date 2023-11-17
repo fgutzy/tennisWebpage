@@ -1,7 +1,8 @@
 package com.example.demo.repository;
 
 
-import com.example.demo.entity.Player;
+import com.example.demo.persitence.Player;
+import com.example.demo.persitence.repository.PlayerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

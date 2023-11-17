@@ -1,6 +1,6 @@
 package com.example.demo.views;
 
-import com.example.demo.repository.PlayerRepository;
+import com.example.demo.persitence.repository.PlayerRepository;
 import com.example.demo.service.PlayerService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -57,8 +57,6 @@ public class MultiplayerView extends VerticalLayout {
             boolean playerTwoLoggedIn = checkCredentials(usernameTwo, passwordTwo);
 
             if (playerOneLoggedIn && playerTwoLoggedIn) {
-                VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", true);
-                VaadinSession.getCurrent().setAttribute("playerTwoLoggedIn", true);
                 VaadinSession.getCurrent().setAttribute("nameOfLoggedInUserOne", usernameOne.getValue());
                 VaadinSession.getCurrent().setAttribute("nameOfLoggedInUserTwo", usernameTwo.getValue());
                 UI.getCurrent().navigate("/game");

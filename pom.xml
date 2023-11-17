@@ -103,6 +103,7 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
@@ -123,7 +124,7 @@
 					<plugin>
 						<groupId>com.vaadin</groupId>
 						<artifactId>vaadin-maven-plugin</artifactId>
-						<version>${vaadin.version}</version>
+						<version>23.2.1</version>
 						<executions>
 							<execution>
 								<id>frontend</id>

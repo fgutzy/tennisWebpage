@@ -1,6 +1,6 @@
 package com.example.demo.views;
 
-import com.example.demo.repository.PlayerRepository;
+import com.example.demo.persitence.repository.PlayerRepository;
 import com.example.demo.service.PlayerService;
 import com.example.demo.service.dto.PlayerDto;
 import com.vaadin.flow.component.UI;

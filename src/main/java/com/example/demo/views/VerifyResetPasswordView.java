@@ -28,7 +28,7 @@ public class VerifyResetPasswordView extends VerticalLayout implements HasUrlPar
         PlayerDto player = playerService.findPlayerByValidationCode(parameter);
         if (player != null) {
             VaadinSession.getCurrent().setAttribute("nameOfLoggedInUserOne", player.getName());
-            VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", true);
+            //VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", true);
             UI.getCurrent().navigate("/login");
             }else {
             Notification.show("Invalid link");

@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Player;
-import com.example.demo.repository.PlayerRepository;
+import com.example.demo.persitence.Player;
+import com.example.demo.persitence.repository.PlayerRepository;
 import com.example.demo.service.dto.DtoFactory;
 import com.example.demo.service.dto.PlayerDto;
 import com.example.demo.service.dto.PlayerDataDto;
@@ -33,8 +33,8 @@ public class PlayerService {
         return passwordEncoder.encode(password);
     }
 
-    public boolean matchPassword(String password, String password2) {
-        return passwordEncoder.matches(password, password2);
+    public boolean matchPassword(String rawPassword, String encodedPassword) {
+        return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
 
@@ -213,10 +213,14 @@ public class PlayerService {
 
     //misses to update the winning percentage
     public void countWinAndLoss(String winningPlayer, String loosingPlayer) {
-        if (VaadinSession.getCurrent().getAttribute("playerOneLoggedIn").toString() != null &&
+        /*if (VaadinSession.getCurrent().getAttribute("playerOneLoggedIn").toString() != null &&
                 VaadinSession.getCurrent().getAttribute("playerOneLoggedIn").toString().equals("true") &&
                 VaadinSession.getCurrent().getAttribute("playerTwoLoggedIn").toString() != null &&
                 VaadinSession.getCurrent().getAttribute("playerTwoLoggedIn").toString().equals("true")) {
+            playerRepository.countWinOrLoss(winningPlayer.trim(), loosingPlayer.trim());
+        }*/
+        if(VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne") != null &&
+                VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserTwo") != null){
             playerRepository.countWinOrLoss(winningPlayer.trim(), loosingPlayer.trim());
         }
     }
@@ -235,9 +239,9 @@ public class PlayerService {
         }
     }
 
-    public PlayerDataDto findPlayerDataByName(String name) {
-        Player player = playerRepository.findPlayerByEmail(name);
-        if (player != null) {
+    public PlayerDataDto findPlayerByNameAndPassword(String name, String password) {
+        Player player = playerRepository.findPlayerByName(name);
+        if (player != null && matchPassword(password, player.getPassword())) {
             return dtoFactory.createPlayerDataDto(player);
         } else {
             return null;
@@ -252,6 +256,7 @@ public class PlayerService {
             return null;
         }
     }
+
 }
 
 

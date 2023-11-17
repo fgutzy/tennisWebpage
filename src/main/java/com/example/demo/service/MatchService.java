@@ -1,9 +1,9 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Match;
-import com.example.demo.entity.Player;
-import com.example.demo.repository.MatchHistoryRepository;
-import com.example.demo.repository.PlayerRepository;
+import com.example.demo.persitence.Match;
+import com.example.demo.persitence.Player;
+import com.example.demo.persitence.repository.MatchHistoryRepository;
+import com.example.demo.persitence.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

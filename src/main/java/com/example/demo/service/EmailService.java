@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.Constants.Constants;
-import com.example.demo.entity.Player;
+import com.example.demo.persitence.Player;
 import com.example.demo.service.dto.PlayerDataDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;

@@ -36,9 +36,8 @@ public class LeaderboardView extends VerticalLayout {
 
     Button loginLogoutButton = new Button();
 
-    loginLogoutButton.setText(VaadinSession.getCurrent().getAttribute("playerOneLoggedIn") == null ||
-                    (boolean) VaadinSession.getCurrent().getAttribute("playerOneLoggedIn")
-                    ? "Log In" : "Log Out");
+    loginLogoutButton.setText(VaadinSession.getCurrent().getAttribute("nameOfLoggedInUserOne") == null
+            ? "Log In" : "Log Out");
 
     loginLogoutButton.addClickListener(event -> {
         if(loginLogoutButton.getText().equals("Log In")){
@@ -46,8 +45,8 @@ public class LeaderboardView extends VerticalLayout {
         }else {
           VaadinSession.getCurrent().getSession().invalidate();
         }
-        VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", false);
-        VaadinSession.getCurrent().setAttribute("playerTwoLoggedIn", false);
+        VaadinSession.getCurrent().setAttribute("nameOfLoggedInUserOne", null);
+        VaadinSession.getCurrent().setAttribute("nameOfLoggedInUserTwo", null);
     });
 
 

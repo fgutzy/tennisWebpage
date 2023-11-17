@@ -1,9 +1,8 @@
 package com.example.demo.Views;
 
-import com.example.demo.entity.Player;
-import com.example.demo.repository.PlayerRepository;
+import com.example.demo.persitence.Player;
+import com.example.demo.persitence.repository.PlayerRepository;
 import com.example.demo.service.PlayerService;
-import com.vaadin.flow.server.VaadinSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,7 +1,6 @@
 package com.example.demo.views;
 
-import com.example.demo.entity.Player;
-import com.example.demo.repository.PlayerRepository;
+import com.example.demo.persitence.repository.PlayerRepository;
 import com.example.demo.service.PlayerService;
 import com.example.demo.service.dto.PlayerDataDto;
 import com.example.demo.service.dto.PlayerDto;
@@ -40,18 +39,13 @@ public class LoginView extends VerticalLayout {
                 username,
                 password,
                 new Button("Login", event -> {
-                    PlayerDataDto playerDto = playerService.findPlayerDataByName(username.getValue());
-                    if (playerDto != null) {
-                        if (playerService.matchPassword(password.getValue(),
-                                playerDto.getPassword()) &&
-                                playerDto.isAccountActivated()) {
-                            VaadinSession.getCurrent().setAttribute("username", username.getValue());
+                    PlayerDataDto playerDto = playerService.findPlayerByNameAndPassword(username.getValue(), password.getValue());
+                    if (playerDto != null && playerDto.isAccountActivated()) {
                             VaadinSession.getCurrent().setAttribute("nameOfLoggedInUserOne", username.getValue());
-                            VaadinSession.getCurrent().setAttribute("playerOneLoggedIn", true);
+                            VaadinSession.getCurrent().setAttribute("uuid", playerDto.getId());
                             log.info("User {} logged in", username);
                             UI.getCurrent().navigate("/game");
-                        }
-                    } else {
+                        } else {
                         Notification.show("User doesnt exist, or wrong credentials");
                         log.warn("User tried to log in with wrong credentials.");
                     }

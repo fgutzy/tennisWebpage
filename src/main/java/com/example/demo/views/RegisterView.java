@@ -1,11 +1,12 @@
 package com.example.demo.views;
 
 //import com.example.demo.entity.Player;
-import com.example.demo.entity.Player;
-import com.example.demo.repository.PlayerRepository;
+import com.example.demo.persitence.Player;
+import com.example.demo.persitence.repository.PlayerRepository;
 import com.example.demo.service.EmailService;
 import com.example.demo.service.PlayerService;
 import com.example.demo.service.dto.PlayerDataDto;
+import com.example.demo.service.dto.PlayerDto;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
@@ -88,7 +89,7 @@ public class RegisterView extends VerticalLayout {
         if (existingPlayerByEmail != null) {
             Notification.show("An account was already created with this email");
         } else {
-            PlayerDataDto existingPlayerByUsername = playerService.findPlayerDataByName(username.getValue());
+            PlayerDto existingPlayerByUsername = playerService.findPlayerByName(username.getValue());
             if (existingPlayerByUsername == null) { // Both email and username are available, create a new player
                 Player newPlayer = new Player(username.getValue(), playerService.hashPassword(password1.getValue()), email.getValue());
                 playerRepository.save(newPlayer);
